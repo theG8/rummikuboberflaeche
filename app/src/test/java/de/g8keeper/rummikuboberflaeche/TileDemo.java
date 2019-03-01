@@ -1,4 +1,7 @@
-package de.g8keeper.rummikub;
+package de.g8keeper.rummikuboberflaeche;
+
+import de.g8keeper.rummikub.Color;
+import de.g8keeper.rummikub.Tile;
 
 public class TileDemo {
 

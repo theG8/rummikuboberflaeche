@@ -41,7 +41,7 @@ public class TileFragment extends Fragment {
 
 
         view.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Tile " + this.myTile.toString() + " wurde geklickt", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Tile " + this.myTile.toString() + " wurde geklickt. Parent: " + getContext().toString(), Toast.LENGTH_SHORT).show();
         });
 
 

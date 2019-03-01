@@ -1,6 +1,11 @@
-package de.g8keeper.rummikub;
+package de.g8keeper.rummikuboberflaeche;
 
 import java.util.ArrayList;
+
+import de.g8keeper.rummikub.Color;
+import de.g8keeper.rummikub.Lane;
+import de.g8keeper.rummikub.PrintUtils;
+import de.g8keeper.rummikub.Tile;
 
 public class LaneDemo {
 

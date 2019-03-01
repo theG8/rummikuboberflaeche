@@ -1,4 +1,4 @@
-package de.g8keeper.rummikub;
+package de.g8keeper.rummikuboberflaeche;
 
 public class PrintUtilsDemo {
 
