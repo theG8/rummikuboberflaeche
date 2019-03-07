@@ -21,76 +21,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@android:drawable/star_big_on" />
 
-    <LinearLayout
-        android:id="@+id/llh_lane"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clipToPadding="true"
-        android:dividerPadding="8dp"
-        android:orientation="horizontal"
-        android:padding="8dp"
+    <ScrollView
+        android:id="@+id/sv_vertical"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/fab_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <de.g8keeper.rummikuboberflaeche.TileView
-        android:id="@+id/tile_test1"
-        android:layout_width="50dp"
-        android:layout_height="70dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/fab_button"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.015" />
-
-    <de.g8keeper.rummikuboberflaeche.TileView
-        android:id="@+id/tile_test2"
-        android:layout_width="50dp"
-        android:layout_height="70dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/fab_button"
-        app:layout_constraintStart_toEndOf="@+id/tile_test1"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.015" />
-
-    <de.g8keeper.rummikuboberflaeche.TileView
-        android:id="@+id/tile_test3"
-        android:layout_width="50dp"
-        android:layout_height="70dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/fab_button"
-        app:layout_constraintStart_toEndOf="@+id/tile_test2"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.015" />
-
-    <de.g8keeper.rummikuboberflaeche.TileView
-        android:id="@+id/tile_test4"
-        android:layout_width="50dp"
-        android:layout_height="70dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/fab_button"
-        app:layout_constraintStart_toEndOf="@+id/tile_test3"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.015" />
-
-    <de.g8keeper.rummikuboberflaeche.TileView
-        android:id="@+id/tile_test5"
-        android:layout_width="50dp"
-        android:layout_height="70dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/fab_button"
-        app:layout_constraintStart_toEndOf="@+id/tile_test4"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.014" />
+        <LinearLayout
+            android:id="@+id/ll_playground"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"/>
+    </ScrollView>
 
 </android.support.constraint.ConstraintLayout>
