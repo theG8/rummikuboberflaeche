@@ -21,17 +21,7 @@ import de.g8keeper.rummikub.Tile;
 
 
 
-class MyOnLongClickListener implements View.OnLongClickListener{
 
-    @Override
-    public boolean onLongClick(View v) {
-        ClipData data = ClipData.newPlainText("","");
-        View.DragShadowBuilder dragShadowBuilder = new View.DragShadowBuilder(v);
-        v.startDrag(data,dragShadowBuilder,v,0);
-
-        return true;
-    }
-}
 
 
 public class TileView extends View {
@@ -64,7 +54,17 @@ public class TileView extends View {
     private void init(Context context, AttributeSet attrs, int defStyleAttr) {
         this.context = context;
 
-        setOnLongClickListener(new MyOnLongClickListener());
+        setOnLongClickListener(new OnLongClickListener(){
+            @Override
+            public boolean onLongClick(View v) {
+                ClipData data = ClipData.newPlainText(v.getParent().toString(),this.toString());
+
+                View.DragShadowBuilder dragShadowBuilder = new View.DragShadowBuilder(v);
+                v.startDrag(data,dragShadowBuilder,v,0);
+
+                return true;
+            }
+        });
 
 
         paint.setAntiAlias(true);
@@ -152,6 +152,8 @@ public class TileView extends View {
         this.mTile = tile;
         postInvalidate();
     }
+
+    //*********************************************************************************************
 
 
 
