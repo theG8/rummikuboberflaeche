@@ -73,10 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
             fragTileSet.getLayout().addView(tileView);
 
-            Button button = new Button(this);
-            button.setLayoutParams(new LinearLayout.LayoutParams(100,100));
 
-            fragTileSet.getLayout().addView(button);
 
         });
 
