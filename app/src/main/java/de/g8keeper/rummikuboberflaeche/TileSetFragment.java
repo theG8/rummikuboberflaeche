@@ -16,6 +16,7 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Space;
 
 import de.g8keeper.rummikub.TileSet;
 
@@ -46,6 +47,10 @@ public class TileSetFragment extends Fragment {
         int pad = getResources().getDimensionPixelOffset(R.dimen.padding_standard);
         view.setPadding(pad, pad, pad, pad);
 
+        view.setMinimumWidth(getResources().getDimensionPixelSize(R.dimen.tile_width) +
+                getResources().getDimensionPixelSize(R.dimen.tile_margin));
+        view.setMinimumHeight((int) (view.getMinimumWidth() * 1.4));
+
         view.setOrientation(LinearLayout.HORIZONTAL);
 
         view.setBackgroundColor(getContext().getColor(R.color.tile_set_background));
@@ -59,6 +64,12 @@ public class TileSetFragment extends Fragment {
             Log.d(TAG, "position " + i + " -> " + child.toString() + " " + rect);
 
         }});
+
+//
+//        Space space = new Space(getContext());
+//        space.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,50));
+//
+//        view.post(()-> view.addView(space));
 
         mLayout = view;
         return view;
@@ -80,6 +91,7 @@ public class TileSetFragment extends Fragment {
         if (myTiles == null) {
             myTiles = tileSet;
         }
+
     }
 
     public TileSet getTileSet() {
@@ -142,32 +154,14 @@ public class TileSetFragment extends Fragment {
                     x = (int) event.getX();
                     y = (int) event.getY();
                     index = getIndexAtPosition(x, y);
-                    description = event.getClipDescription().getLabel().toString();
 
-                    if (mLayout.toString().equals(description)) {
-                        if (index != -1) {
-                            mLayout.removeView(dragedView);
+//                        if (index != -1) {
+                            ((LinearLayout)dragedView.getParent()).removeView(dragedView);
+
                             mLayout.addView(dragedView, index);
-                        }
-                    }
+//                        }
 
 
-//                    Log.d(TAG, "onDrag: ACTION_DRAG_LOCATION -> " + dragedView + " -> " +
-//                            x + "/" + y + " index: " + index + " dummyView: " + mLayout.indexOfChild(dummyView));
-//                    if (dummyView != null) {
-//                        if (index != -1 && index != dragedTileIndex && mLayout.indexOfChild(dummyView) != index ) {
-//                            mLayout.removeView(dummyView);
-//                            mLayout.addView(dummyView, index);
-//                        }
-//                    } else {
-//                        dummyView = new ImageView(getContext());
-//                        dummyView.setLayoutParams(dragedView.getLayoutParams());
-//                        if(index != -1){
-//                            mLayout.addView(dummyView,index);
-//                        } else {
-//                            mLayout.addView(dummyView);
-//                        }
-//                    }
 
                     break;
 
@@ -176,29 +170,19 @@ public class TileSetFragment extends Fragment {
                     x = (int) event.getX();
                     y = (int) event.getY();
 
-
-
                     index = getIndexAtPosition(x, y);
 
-                    description = event.getClipDescription().getLabel().toString();
 
-                    if (mLayout.toString().equals(description)) {
-//
-//                    View vMove = mLayout.getChildAt(index);
-//
-//
-//
-//                    dragedView.animate().
-//                            x(vMove.getX()).
-//                            y(vMove.getY()).
-//                            setDuration(1000).
-//                            start();
-
-
+                    if (((LinearLayout) dragedView.getParent()).equals(mLayout) ){
                         mLayout.removeView(dragedView);
-                        mLayout.addView(dragedView, index);
+                    } else {
+                        if(index == -1){
+                            ((LinearLayout) dragedView.getParent()).removeView(dragedView);
+                        }
                     }
-//                    Log.d(TAG, "onDrag: ACTION_DROP -> " + dragedView + " move to index " + index);
+
+                    mLayout.addView(dragedView, index);
+                    Log.d(TAG, "onDrag: ACTION_DROP -> " + dragedView + " move to index " + index + " " +mLayout.getId());
 
                     break;
 

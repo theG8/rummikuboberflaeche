@@ -3,4 +3,7 @@
 
     <dimen name="padding_standard">2dp</dimen>
 
+    <dimen name="tile_width">44dp</dimen>
+    <dimen name="tile_margin">1dp</dimen>
+
 </resources>
