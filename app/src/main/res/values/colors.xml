@@ -8,12 +8,13 @@
     <!-- tileSet-colors -->
     <color name="tile_set_background">#2700FF00</color>
 
+    <color name="lane_background">#27FF0000</color>
 
     <!-- tile-colors -->
     <color name="tile_background">#FFEFCD</color>
     <color name="tile_red">#FF0000</color>
     <color name="tile_blue">#0040FF</color>
-    <color name="tile_yellow">#FFC800</color>
+    <color name="tile_yellow">#DBAD00</color>
     <color name="tile_black">#000000</color>
     <color name="tile_joker">#B400B1</color>
 

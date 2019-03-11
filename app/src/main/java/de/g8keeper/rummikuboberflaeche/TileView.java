@@ -57,7 +57,7 @@ public class TileView extends View {
         setOnLongClickListener(new OnLongClickListener(){
             @Override
             public boolean onLongClick(View v) {
-                ClipData data = ClipData.newPlainText(v.getParent().toString(),this.toString());
+                ClipData data = ClipData.newPlainText(v.getParent().toString(),""); //this.toString());
 
                 View.DragShadowBuilder dragShadowBuilder = new View.DragShadowBuilder(v);
                 v.startDrag(data,dragShadowBuilder,v,0);
@@ -65,6 +65,7 @@ public class TileView extends View {
                 return true;
             }
         });
+
 
 
         paint.setAntiAlias(true);
@@ -102,7 +103,7 @@ public class TileView extends View {
         }
 
 
-        Log.d(TAG, "onDraw: valueText: " + valueText + " textColor: " + textColor);
+//        Log.d(TAG, "onDraw: valueText: " + valueText + " textColor: " + textColor);
 
         int i = 1;
 
@@ -124,6 +125,12 @@ public class TileView extends View {
 
 
 
+    public static TileView newInstance(Context context, Tile tile){
+        int width = context.getResources().getDimensionPixelSize(R.dimen.tile_width);
+
+        return newInstance(context,tile,width);
+    }
+
     public static TileView newInstance(Context context, Tile tile, int width){
         TileView tv = new TileView(context);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -131,15 +138,12 @@ public class TileView extends View {
                 (int) (width * 1.4)
         );
 
-        params.setMargins(8,8,8,8);
+        int margin = context.getResources().getDimensionPixelSize(R.dimen.tile_margin);
+        params.setMargins(margin,margin,margin,margin);
 
         tv.setLayoutParams(params);
 
         tv.setTile(tile);
-
-
-
-
 
         return tv;
     }
