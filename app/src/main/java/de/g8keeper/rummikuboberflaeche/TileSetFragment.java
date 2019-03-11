@@ -12,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 
 
 import de.g8keeper.rummikub.Tile;
@@ -25,7 +27,11 @@ public class TileSetFragment extends Fragment {
     private static View dragedViewParent = null;
     private static int dragedTileIndex = -1;
 
-    private LinearLayout mLayout;
+    private TableLayout mLayout;
+
+    private TableRow tableRow1;
+    private TableRow tableRow2;
+
     private TileSet myTiles;
 
 
@@ -34,12 +40,12 @@ public class TileSetFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
 //        final View view = new LinearLayout(getContext());
-        LinearLayout view = new LinearLayout(getContext());
+        TableLayout view = new TableLayout(getContext());
 
 
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
+        TableLayout.LayoutParams params = new TableLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
 
 
         view.setLayoutParams(params);
@@ -47,9 +53,7 @@ public class TileSetFragment extends Fragment {
         int pad = getResources().getDimensionPixelOffset(R.dimen.padding_standard);
         view.setPadding(pad, pad, pad, pad);
 
-        view.setMinimumWidth(getResources().getDimensionPixelSize(R.dimen.tile_width) +
-                getResources().getDimensionPixelSize(R.dimen.tile_margin));
-        view.setMinimumHeight((int) (view.getMinimumWidth() * 1.4));
+
 
         view.setOrientation(LinearLayout.HORIZONTAL);
 
@@ -58,8 +62,28 @@ public class TileSetFragment extends Fragment {
         view.setOnDragListener(new MyOnDragListener());
 
 
+        tableRow1 = new TableRow(getContext());
+        tableRow2 = new TableRow(getContext());
+
+//        tableRow1.setLayoutParams(params);
+//        tableRow2.setLayoutParams(params);
+        tableRow1.setOrientation(LinearLayout.HORIZONTAL);
+        tableRow2.setOrientation(LinearLayout.HORIZONTAL);
+
+        tableRow1.setMinimumWidth(getResources().getDimensionPixelSize(R.dimen.tile_width) +
+                getResources().getDimensionPixelSize(R.dimen.tile_margin));
+        tableRow1.setMinimumHeight((int) (tableRow1.getMinimumWidth() * 1.4));
+
+        tableRow2.setMinimumHeight(tableRow1.getMinimumHeight());
+        tableRow2.setMinimumWidth(tableRow1.getMinimumWidth());
+
+
+
+        view.addView(tableRow1);
+        view.addView(tableRow2);
+
         for(Tile tile: myTiles){
-            view.addView(TileView.newInstance(getContext(),tile));
+            tableRow1.addView(TileView.newInstance(getContext(),tile));
         }
 
         mLayout = view;
@@ -74,7 +98,7 @@ public class TileSetFragment extends Fragment {
         return fragment;
     }
 
-    public LinearLayout getLayout() {
+    public TableLayout getLayout() {
         return mLayout;
     }
 
