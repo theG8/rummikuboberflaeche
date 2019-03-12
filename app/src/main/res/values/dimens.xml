@@ -6,7 +6,6 @@
     <dimen name="tile_width">44dp</dimen>
     <dimen name="tile_margin">1dp</dimen>
 
-    <dimen name="tile_width">44dp</dimen>
-    <dimen name="tile_margin">1dp</dimen>
+
 
 </resources>
