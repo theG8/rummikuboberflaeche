@@ -12,27 +12,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 
 
+import de.g8keeper.rummikub.Lane;
 import de.g8keeper.rummikub.Tile;
 import de.g8keeper.rummikub.TileSet;
 
 
-public class TileSetFragment extends Fragment {
+public class LaneFragment extends Fragment {
 
-    private static final String TAG = TileSetFragment.class.getSimpleName();
+    private static final String TAG = LaneFragment.class.getSimpleName();
 
     private static View dragedViewParent = null;
     private static int dragedTileIndex = -1;
 
-    private TableLayout mLayout;
-
-    private TableRow tableRow1;
-    private TableRow tableRow2;
-
-    private TileSet myTiles;
+    private LinearLayout mLayout;
+    private Lane myLane;
 
 
     @Nullable
@@ -40,12 +35,12 @@ public class TileSetFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
 //        final View view = new LinearLayout(getContext());
-        TableLayout view = new TableLayout(getContext());
+        LinearLayout view = new LinearLayout(getContext());
 
 
-        TableLayout.LayoutParams params = new TableLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
 
 
         view.setLayoutParams(params);
@@ -53,37 +48,20 @@ public class TileSetFragment extends Fragment {
         int pad = getResources().getDimensionPixelOffset(R.dimen.padding_standard);
         view.setPadding(pad, pad, pad, pad);
 
-
+        view.setMinimumWidth(getResources().getDimensionPixelSize(R.dimen.tile_width) +
+                getResources().getDimensionPixelSize(R.dimen.tile_margin));
+        view.setMinimumHeight((int) (view.getMinimumWidth() * 1.4));
 
         view.setOrientation(LinearLayout.HORIZONTAL);
 
-        view.setBackgroundColor(getContext().getColor(R.color.tile_set_background));
+        view.setBackgroundColor(getContext().getColor(R.color.lane_background));
 
         view.setOnDragListener(new MyOnDragListener());
 
+        myLane.sort();
 
-        tableRow1 = new TableRow(getContext());
-        tableRow2 = new TableRow(getContext());
-
-//        tableRow1.setLayoutParams(params);
-//        tableRow2.setLayoutParams(params);
-        tableRow1.setOrientation(LinearLayout.HORIZONTAL);
-        tableRow2.setOrientation(LinearLayout.HORIZONTAL);
-
-        tableRow1.setMinimumWidth(getResources().getDimensionPixelSize(R.dimen.tile_width) +
-                getResources().getDimensionPixelSize(R.dimen.tile_margin));
-        tableRow1.setMinimumHeight((int) (tableRow1.getMinimumWidth() * 1.4));
-
-        tableRow2.setMinimumHeight(tableRow1.getMinimumHeight());
-        tableRow2.setMinimumWidth(tableRow1.getMinimumWidth());
-
-
-
-        view.addView(tableRow1);
-        view.addView(tableRow2);
-
-        for(Tile tile: myTiles){
-            tableRow1.addView(TileView.newInstance(getContext(),tile));
+        for(Tile tile: myLane){
+            view.addView(TileView.newInstance(getContext(),tile));
         }
 
         mLayout = view;
@@ -91,26 +69,26 @@ public class TileSetFragment extends Fragment {
 
     }
 
-    public static TileSetFragment newInstance(TileSet tileSet) {
-        TileSetFragment fragment = new TileSetFragment();
-        fragment.setTileSet(tileSet);
+    public static LaneFragment newInstance(Lane lane) {
+        LaneFragment fragment = new LaneFragment();
+        fragment.setLane(lane);
 
         return fragment;
     }
 
-    public TableLayout getLayout() {
+    public LinearLayout getLayout() {
         return mLayout;
     }
 
-    private void setTileSet(TileSet tileSet) {
-        if (myTiles == null) {
-            myTiles = tileSet;
+    private void setLane(Lane lane) {
+        if (myLane == null) {
+            myLane = lane;
         }
 
     }
 
-    public TileSet getTileSet() {
-        return myTiles;
+    public Lane getMyLane() {
+        return myLane;
     }
 
 

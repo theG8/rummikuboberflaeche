@@ -13,8 +13,12 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Space;
 
+import java.util.Random;
+
 import de.g8keeper.rummikub.Color;
+import de.g8keeper.rummikub.Lane;
 import de.g8keeper.rummikub.Tile;
+import de.g8keeper.rummikub.TilePool;
 import de.g8keeper.rummikub.TileSet;
 
 
@@ -23,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private TileSetFragment fragTileSet_1;
     private TileSetFragment fragTileSet_2;
+    private LaneFragment laneFragment;
     private LinearLayout llPlayground;
     public ScrollView svVertical;
     public HorizontalScrollView svHorizontal;
@@ -37,31 +42,76 @@ public class MainActivity extends AppCompatActivity {
         llPlayground = findViewById(R.id.ll_playground);
 
 
-
         llPlayground.setOnDragListener(new ScrollOnDragListener());
+
+        initFloatingActionButton();
+
+
         // ******************************************************************************************
         // Testcode:                                                                                *
         // ******************************************************************************************
 
-        initFloatingActionButton();
 
-        fragTileSet_1 = TileSetFragment.newInstance(new TileSet());
-        fragTileSet_2 = TileSetFragment.newInstance(new TileSet());
+        TilePool tilePool = new TilePool();
+        TileSet tiles1 = new TileSet();
+        TileSet tiles2 = new TileSet();
+        Lane lane = new Lane();
 
-        getSupportFragmentManager().beginTransaction().
-                add(R.id.ll_playground, fragTileSet_1, "fragTileSet_1").commit();
 
-        Space space = new Space(this);
-        space.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 25));
+        for (int i = 0; i < 14; i++) {
+
+            tiles1.addTile(tilePool.getTile());
+            tiles2.addTile(tilePool.getTile());
+        }
+
+        lane.addTile(new Tile(Color.RED,10));
+        lane.addTile(new Tile(Color.RED,3));
+        lane.addTile(new Tile(Color.RED,8));
+        lane.addTile(new Tile(Color.RED,2));
+        lane.addTile(new Tile(Color.RED,1));
+        lane.addTile(new Tile(Color.RED,5));
+        lane.addTile(new Tile(Color.RED,7));
+
+
+        fragTileSet_1 = TileSetFragment.newInstance(tiles1);
+
+        fragTileSet_2 = TileSetFragment.newInstance(tiles2);
+
+        laneFragment = LaneFragment.newInstance(lane);
+
 
         llPlayground.post(() -> {
-            llPlayground.addView(space);
             getSupportFragmentManager().beginTransaction().
-                    add(R.id.ll_playground, fragTileSet_2, "fragTileSet_2").
+                    add(R.id.ll_playground, fragTileSet_1, "fragTileSet_1").
                     commit();
+
         });
 
 
+        llPlayground.post(() -> {
+            llPlayground.addView(getSpace());
+        });
+
+        llPlayground.post(() -> {
+            getSupportFragmentManager().beginTransaction().
+                    add(R.id.ll_playground, laneFragment, "laneFragment").
+                    commit();
+
+        });
+
+        llPlayground.post(() -> {
+            llPlayground.addView(getSpace());
+
+        });
+
+
+    }
+
+    private Space getSpace() {
+        Space space = new Space(this);
+        space.setId(new Random().nextInt());
+        space.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 25));
+        return space;
     }
 
     private void initFloatingActionButton() {
@@ -73,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
 
             TileView tileView = TileView.newInstance(
                     this,
-                    new Tile(Color.RED, 12)
+                    new Tile(Color.RED, 2)
 
             );
 
@@ -81,23 +131,7 @@ public class MainActivity extends AppCompatActivity {
 
             tileView = TileView.newInstance(
                     this,
-                    new Tile(Color.BLUE, 2)
-            );
-
-            fragTileSet_1.getLayout().addView(tileView);
-
-            tileView = TileView.newInstance(
-                    this,
-                    new Tile(Color.BLACK, 7)
-            );
-
-            fragTileSet_1.getLayout().addView(tileView);
-
-
-            tileView = TileView.newInstance(
-                    this,
-                    new Tile(Color.YELLOW, 3)
-
+                    new Tile(Color.RED, 3)
             );
 
             fragTileSet_1.getLayout().addView(tileView);
@@ -105,6 +139,22 @@ public class MainActivity extends AppCompatActivity {
             tileView = TileView.newInstance(
                     this,
                     new Tile(Color.RED, 4)
+            );
+
+            fragTileSet_1.getLayout().addView(tileView);
+
+
+            tileView = TileView.newInstance(
+                    this,
+                    new Tile(Color.RED, 5)
+
+            );
+
+            fragTileSet_1.getLayout().addView(tileView);
+
+            tileView = TileView.newInstance(
+                    this,
+                    new Tile(Color.RED, 6)
 
             );
 
@@ -121,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
 
             tileView = TileView.newInstance(
                     this,
-                    new Tile(Color.RED, 12)
+                    new Tile(Color.BLUE, 9)
 
             );
 
@@ -129,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
 
             tileView = TileView.newInstance(
                     this,
-                    new Tile(Color.BLUE, 2)
+                    new Tile(Color.BLUE, 10)
 
             );
 
@@ -137,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
 
             tileView = TileView.newInstance(
                     this,
-                    new Tile(Color.BLACK, 7)
+                    new Tile(Color.BLUE, 11)
 
             );
 
@@ -146,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
 
             tileView = TileView.newInstance(
                     this,
-                    new Tile(Color.YELLOW, 3)
+                    new Tile(Color.BLUE, 12)
 
             );
 
@@ -154,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
 
             tileView = TileView.newInstance(
                     this,
-                    new Tile(Color.RED, 4)
+                    new Tile(Color.BLUE, 13)
             );
 
             fragTileSet_2.getLayout().addView(tileView);
@@ -173,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
     class ScrollOnDragListener implements View.OnDragListener {
         private final String TAG = ScrollOnDragListener.class.getSimpleName();
 
-        private int scrollBounds = 50;
+        private int scrollBounds = 20;
         int dragedTileIndex;
 
         @Override
@@ -199,29 +249,29 @@ public class MainActivity extends AppCompatActivity {
 
                     llPlayground.getGlobalVisibleRect(visibleRect, offset);
 
-                    virtualRect.set(0,0,visibleRect.right - visibleRect.left, visibleRect.bottom - visibleRect.top);
+                    virtualRect.set(0, 0, visibleRect.right - visibleRect.left, visibleRect.bottom - visibleRect.top);
                     pos.set(x - (visibleRect.left - offset.x), y - (visibleRect.top - offset.y));
 
                     Log.d(TAG, "position: " + pos.x + ", " + pos.y + " visRect: " + visibleRect + " ofs: " + offset + " vir: " + virtualRect);
 
                     // left
-                    if (pos.x < scrollBorder){
+                    if (pos.x < scrollBorder) {
                         svHorizontal.arrowScroll(ScrollView.FOCUS_LEFT);
                     }
 
                     // right
-                    if (pos.x > virtualRect.right - scrollBorder){
+                    if (pos.x > virtualRect.right - scrollBorder) {
                         svHorizontal.arrowScroll(ScrollView.FOCUS_RIGHT);
                     }
 
                     // top
                     if (pos.y < scrollBorder) {
-                        svHorizontal.arrowScroll(ScrollView.FOCUS_UP);
+                        svVertical.arrowScroll(ScrollView.FOCUS_UP);
                     }
 
                     // bottom
-                    if (pos.y > virtualRect.bottom - scrollBorder){
-                        svHorizontal.arrowScroll(ScrollView.FOCUS_DOWN);
+                    if (pos.y > virtualRect.bottom - scrollBorder) {
+                        svVertical.arrowScroll(ScrollView.FOCUS_DOWN);
                     }
 
                     break;

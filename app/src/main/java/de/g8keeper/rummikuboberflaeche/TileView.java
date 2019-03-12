@@ -57,7 +57,7 @@ public class TileView extends View {
         setOnLongClickListener(new OnLongClickListener(){
             @Override
             public boolean onLongClick(View v) {
-                ClipData data = ClipData.newPlainText(v.getParent().toString(),this.toString());
+                ClipData data = ClipData.newPlainText(v.getParent().toString(),""); //this.toString());
 
                 View.DragShadowBuilder dragShadowBuilder = new View.DragShadowBuilder(v);
                 v.startDrag(data,dragShadowBuilder,v,0);
@@ -67,12 +67,18 @@ public class TileView extends View {
         });
 
 
+
         paint.setAntiAlias(true);
         paint.setTypeface(Typeface.create("Arial", Typeface.BOLD));
         paint.setTextAlign(Paint.Align.CENTER);
 
     }
 
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+
+    }
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -81,6 +87,8 @@ public class TileView extends View {
         int backgroundColor = getResources().getColor(R.color.tile_background, null);
         int textColor;
         String valueText;
+
+
 
         paint.setColor(backgroundColor);
         canvas.drawRect(0, 0, getRight(), getBottom(), paint);
@@ -102,7 +110,7 @@ public class TileView extends View {
         }
 
 
-        Log.d(TAG, "onDraw: valueText: " + valueText + " textColor: " + textColor);
+//        Log.d(TAG, "onDraw: valueText: " + valueText + " textColor: " + textColor);
 
         int i = 1;
 
@@ -132,10 +140,13 @@ public class TileView extends View {
 
     public static TileView newInstance(Context context, Tile tile, int width){
         TileView tv = new TileView(context);
+
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 width,
                 (int) (width * 1.4)
         );
+
+
 
         int margin = context.getResources().getDimensionPixelSize(R.dimen.tile_margin);
         params.setMargins(margin,margin,margin,margin);
