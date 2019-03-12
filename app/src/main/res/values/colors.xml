@@ -6,7 +6,7 @@
 
 
     <!-- tileSet-colors -->
-    <color name="tile_set_background">#2700FF00</color>
+    <color name="tile_set_background">#27FFFF00</color>
 
     <color name="lane_background">#27FF0000</color>
 

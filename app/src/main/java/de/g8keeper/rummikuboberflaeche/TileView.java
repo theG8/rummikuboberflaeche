@@ -2,6 +2,7 @@ package de.g8keeper.rummikuboberflaeche;
 
 import android.content.ClipData;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -57,6 +58,11 @@ public class TileView extends View {
         setOnLongClickListener(new OnLongClickListener(){
             @Override
             public boolean onLongClick(View v) {
+
+//
+//                Intent intent = new Intent();
+//                intent.putExtra("isFromTileSet",)
+
                 ClipData data = ClipData.newPlainText(v.getParent().toString(),""); //this.toString());
 
                 View.DragShadowBuilder dragShadowBuilder = new View.DragShadowBuilder(v);

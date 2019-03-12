@@ -2,7 +2,7 @@ package de.g8keeper.rummikuboberflaeche;
 
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,12 +25,25 @@ import de.g8keeper.rummikub.TileSet;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private TileSetFragment fragTileSet_1;
-    private TileSetFragment fragTileSet_2;
+
+    public static View draggedViewParent = null;
+    public static int draggedTileIndex = -1;
+
+
+
+    private TileSetFragment fragTileSet;
+
     private LaneFragment laneFragment;
+    private LinearLayout llTileSet;
     private LinearLayout llPlayground;
-    public ScrollView svVertical;
-    public HorizontalScrollView svHorizontal;
+    private ScrollView svVertical;
+    private HorizontalScrollView svHorizontal;
+    private HorizontalScrollView scTileSet;
+
+
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,12 +52,13 @@ public class MainActivity extends AppCompatActivity {
 
         svVertical = findViewById(R.id.sv_vertical);
         svHorizontal = findViewById(R.id.sv_horizontal);
+        scTileSet = findViewById(R.id.sv_tile_set);
+        llTileSet = findViewById(R.id.ll_tile_set);
+
         llPlayground = findViewById(R.id.ll_playground);
 
 
         llPlayground.setOnDragListener(new ScrollOnDragListener());
-
-        initFloatingActionButton();
 
 
         // ******************************************************************************************
@@ -53,16 +67,20 @@ public class MainActivity extends AppCompatActivity {
 
 
         TilePool tilePool = new TilePool();
-        TileSet tiles1 = new TileSet();
-        TileSet tiles2 = new TileSet();
+        TileSet tiles = new TileSet();
+
         Lane lane = new Lane();
 
 
         for (int i = 0; i < 14; i++) {
 
-            tiles1.addTile(tilePool.getTile());
-            tiles2.addTile(tilePool.getTile());
+            tiles.addTile(tilePool.getTile());
+
         }
+
+        fragTileSet = TileSetFragment.newInstance(tiles);
+
+
 
         lane.addTile(new Tile(Color.RED,10));
         lane.addTile(new Tile(Color.RED,3));
@@ -72,25 +90,14 @@ public class MainActivity extends AppCompatActivity {
         lane.addTile(new Tile(Color.RED,5));
         lane.addTile(new Tile(Color.RED,7));
 
-
-        fragTileSet_1 = TileSetFragment.newInstance(tiles1);
-
-        fragTileSet_2 = TileSetFragment.newInstance(tiles2);
-
         laneFragment = LaneFragment.newInstance(lane);
 
 
-        llPlayground.post(() -> {
-            getSupportFragmentManager().beginTransaction().
-                    add(R.id.ll_playground, fragTileSet_1, "fragTileSet_1").
-                    commit();
-
-        });
+        getSupportFragmentManager().beginTransaction().
+                add(R.id.ll_tile_set, fragTileSet, "fragTileSet").
+                commit();
 
 
-        llPlayground.post(() -> {
-            llPlayground.addView(getSpace());
-        });
 
         llPlayground.post(() -> {
             getSupportFragmentManager().beginTransaction().
@@ -114,111 +121,6 @@ public class MainActivity extends AppCompatActivity {
         return space;
     }
 
-    private void initFloatingActionButton() {
-
-        FloatingActionButton fab = findViewById(R.id.fab_button);
-
-        fab.setOnClickListener((view) -> {
-
-
-            TileView tileView = TileView.newInstance(
-                    this,
-                    new Tile(Color.RED, 2)
-
-            );
-
-            fragTileSet_1.getLayout().addView(tileView);
-
-            tileView = TileView.newInstance(
-                    this,
-                    new Tile(Color.RED, 3)
-            );
-
-            fragTileSet_1.getLayout().addView(tileView);
-
-            tileView = TileView.newInstance(
-                    this,
-                    new Tile(Color.RED, 4)
-            );
-
-            fragTileSet_1.getLayout().addView(tileView);
-
-
-            tileView = TileView.newInstance(
-                    this,
-                    new Tile(Color.RED, 5)
-
-            );
-
-            fragTileSet_1.getLayout().addView(tileView);
-
-            tileView = TileView.newInstance(
-                    this,
-                    new Tile(Color.RED, 6)
-
-            );
-
-            fragTileSet_1.getLayout().addView(tileView);
-            tileView = TileView.newInstance(
-                    this,
-                    new Tile(true)
-
-            );
-
-            fragTileSet_1.getLayout().addView(tileView);
-
-            //*******************************************
-
-            tileView = TileView.newInstance(
-                    this,
-                    new Tile(Color.BLUE, 9)
-
-            );
-
-            fragTileSet_2.getLayout().addView(tileView);
-
-            tileView = TileView.newInstance(
-                    this,
-                    new Tile(Color.BLUE, 10)
-
-            );
-
-            fragTileSet_2.getLayout().addView(tileView);
-
-            tileView = TileView.newInstance(
-                    this,
-                    new Tile(Color.BLUE, 11)
-
-            );
-
-            fragTileSet_2.getLayout().addView(tileView);
-
-
-            tileView = TileView.newInstance(
-                    this,
-                    new Tile(Color.BLUE, 12)
-
-            );
-
-            fragTileSet_2.getLayout().addView(tileView);
-
-            tileView = TileView.newInstance(
-                    this,
-                    new Tile(Color.BLUE, 13)
-            );
-
-            fragTileSet_2.getLayout().addView(tileView);
-            tileView = TileView.newInstance(
-                    this,
-                    new Tile(true)
-            );
-
-            fragTileSet_2.getLayout().addView(tileView);
-
-
-        });
-
-    }
 
     class ScrollOnDragListener implements View.OnDragListener {
         private final String TAG = ScrollOnDragListener.class.getSimpleName();

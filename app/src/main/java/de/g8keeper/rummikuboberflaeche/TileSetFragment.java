@@ -12,8 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 
 
 import de.g8keeper.rummikub.Tile;
@@ -24,13 +22,11 @@ public class TileSetFragment extends Fragment {
 
     private static final String TAG = TileSetFragment.class.getSimpleName();
 
-    private static View dragedViewParent = null;
-    private static int dragedTileIndex = -1;
+//    private static View draggedViewParent = null;
+//    private static int draggedTileIndex = -1;
 
-    private TableLayout mLayout;
 
-    private TableRow tableRow1;
-    private TableRow tableRow2;
+    private LinearLayout mLayout;
 
     private TileSet myTiles;
 
@@ -40,17 +36,18 @@ public class TileSetFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
 //        final View view = new LinearLayout(getContext());
-        TableLayout view = new TableLayout(getContext());
+        LinearLayout view = new LinearLayout(getContext());
 
 
-        TableLayout.LayoutParams params = new TableLayout.LayoutParams(
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
 
+        view.setMinimumWidth(container.getWidth());
 
         view.setLayoutParams(params);
 
-        int pad = getResources().getDimensionPixelOffset(R.dimen.padding_standard);
+        int pad = getResources().getDimensionPixelOffset(R.dimen.padding_tile_set);
         view.setPadding(pad, pad, pad, pad);
 
 
@@ -59,31 +56,13 @@ public class TileSetFragment extends Fragment {
 
         view.setBackgroundColor(getContext().getColor(R.color.tile_set_background));
 
-        view.setOnDragListener(new MyOnDragListener());
-
-
-        tableRow1 = new TableRow(getContext());
-        tableRow2 = new TableRow(getContext());
-
-//        tableRow1.setLayoutParams(params);
-//        tableRow2.setLayoutParams(params);
-        tableRow1.setOrientation(LinearLayout.HORIZONTAL);
-        tableRow2.setOrientation(LinearLayout.HORIZONTAL);
-
-        tableRow1.setMinimumWidth(getResources().getDimensionPixelSize(R.dimen.tile_width) +
-                getResources().getDimensionPixelSize(R.dimen.tile_margin));
-        tableRow1.setMinimumHeight((int) (tableRow1.getMinimumWidth() * 1.4));
-
-        tableRow2.setMinimumHeight(tableRow1.getMinimumHeight());
-        tableRow2.setMinimumWidth(tableRow1.getMinimumWidth());
+        view.setOnDragListener(new TileSetOnDragListener());
 
 
 
-        view.addView(tableRow1);
-        view.addView(tableRow2);
 
         for(Tile tile: myTiles){
-            tableRow1.addView(TileView.newInstance(getContext(),tile));
+            view.addView(TileView.newInstance(getContext(),tile));
         }
 
         mLayout = view;
@@ -98,7 +77,7 @@ public class TileSetFragment extends Fragment {
         return fragment;
     }
 
-    public TableLayout getLayout() {
+    public LinearLayout getLayout() {
         return mLayout;
     }
 
@@ -132,10 +111,10 @@ public class TileSetFragment extends Fragment {
     }
 
 
-    class MyOnDragListener implements View.OnDragListener {
-        private final String TAG = MyOnDragListener.class.getSimpleName();
+    class TileSetOnDragListener implements View.OnDragListener {
+        private final String TAG = TileSetOnDragListener.class.getSimpleName();
 
-        View dragedView = null;
+        View draggedView = null;
 
 
         @Override
@@ -148,19 +127,19 @@ public class TileSetFragment extends Fragment {
 
                 case DragEvent.ACTION_DRAG_STARTED:
 
-                    dragedView = (View) event.getLocalState();
+                    draggedView = (View) event.getLocalState();
 
-                    if(v == dragedView.getParent()) {
-                        Log.d(TAG, "onDrag: ACTION_DRAG_STARTED -> " + dragedView);
+                    if(v == draggedView.getParent()) {
+                        Log.d(TAG, "onDrag: ACTION_DRAG_STARTED -> " + draggedView);
 
                         x = (int) event.getX();
                         y = (int) event.getY();
 
 
-                        dragedViewParent = v;
-                        dragedTileIndex = getIndexAtPosition(x, y);
+                        MainActivity.draggedViewParent = v;
+                        MainActivity.draggedTileIndex = getIndexAtPosition(x, y);
 
-                        Log.d(TAG, "onDrag: dVP: " + dragedViewParent.toString() + " dTIndex: " + dragedTileIndex);
+                        Log.d(TAG, "onDrag: dVP: " + MainActivity.draggedViewParent.toString() + " dTIndex: " + MainActivity.draggedTileIndex);
                     }
                     break;
 
@@ -171,11 +150,11 @@ public class TileSetFragment extends Fragment {
 
                     index = getIndexAtPosition(x, y);
 
-                    if (((LinearLayout) dragedView.getParent()).indexOfChild(dragedView) != index) {
+                    if (((LinearLayout) draggedView.getParent()).indexOfChild(draggedView) != index) {
 
-                        ((LinearLayout) dragedView.getParent()).removeView(dragedView);
+                        ((LinearLayout) draggedView.getParent()).removeView(draggedView);
 
-                        mLayout.addView(dragedView, index);
+                        mLayout.addView(draggedView, index);
                     }
 
                     break;
@@ -188,36 +167,36 @@ public class TileSetFragment extends Fragment {
 
                     index = getIndexAtPosition(x, y);
 
-                    Log.d(TAG, "onDrag: ACTION_DROP -> " + dragedView + " move to index " + index + " " + mLayout.getId());
+                    Log.d(TAG, "onDrag: ACTION_DROP -> " + draggedView + " move to index " + index + " " + mLayout.getId());
 
                     break;
 
 
                 case DragEvent.ACTION_DRAG_ENDED:
-//                    Log.d(TAG, "onDrag: ACTION_DRAG_ENDED -> " + dragedView + " getResult(): " +  event.getResult());
+//                    Log.d(TAG, "onDrag: ACTION_DRAG_ENDED -> " + draggedView + " getResult(): " +  event.getResult());
 
 
-                    if(dragedView.getParent() == null){
-                        Log.d(TAG, "onDrag: getParent() == null put back to " + dragedViewParent);
-                        ((LinearLayout)dragedViewParent).addView(dragedView,dragedTileIndex);
+                    if(draggedView.getParent() == null){
+                        Log.d(TAG, "onDrag: getParent() == null put back to " + MainActivity.draggedViewParent);
+                        ((LinearLayout) MainActivity.draggedViewParent).addView(draggedView, MainActivity.draggedTileIndex);
                     }
 
                     break;
 
                 case DragEvent.ACTION_DRAG_ENTERED:
-//                    Log.d(TAG, "onDrag: ACTION_DRAG_ENTERED -> " + dragedView + " (" + v + ")");
+//                    Log.d(TAG, "onDrag: ACTION_DRAG_ENTERED -> " + draggedView + " (" + v + ")");
 
-                    if (dragedView.getParent() == null) {
-                        ((LinearLayout) v).addView(dragedView);
+                    if (draggedView.getParent() == null) {
+                        ((LinearLayout) v).addView(draggedView);
                     }
 
                     break;
                 case DragEvent.ACTION_DRAG_EXITED:
 
 
-//                    Log.d(TAG, "onDrag: ACTION_DRAG_EXITED -> " + dragedView + " (" + v + ")");
+//                    Log.d(TAG, "onDrag: ACTION_DRAG_EXITED -> " + draggedView + " (" + v + ")");
 
-                    ((LinearLayout) v).removeView(dragedView);
+                    ((LinearLayout) v).removeView(draggedView);
                     break;
             }
 
