@@ -18,7 +18,7 @@ import de.g8keeper.rummikub.Lane;
 import de.g8keeper.rummikub.Tile;
 
 
-public class LaneFragment extends Fragment {
+public class LaneFragment extends Fragment implements ITileDragDrop {
 
     private static final String TAG = LaneFragment.class.getSimpleName();
 
@@ -35,7 +35,7 @@ public class LaneFragment extends Fragment {
 
 //        final View view = new LinearLayout(getContext());
         LinearLayout view = new LinearLayout(getContext());
-
+        mLayout = view;
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -55,15 +55,16 @@ public class LaneFragment extends Fragment {
 
         view.setBackgroundColor(getContext().getColor(R.color.lane_background));
 
-        view.setOnDragListener(new LaneOnDragListener());
+
+        view.setOnDragListener(new MainOnDragListener(this));
 
         myLane.sort();
 
-        for(Tile tile: myLane){
-            view.addView(TileView.newInstance(getContext(),tile));
+        for (Tile tile : myLane) {
+            view.addView(TileView.newInstance(getContext(), tile));
         }
 
-        mLayout = view;
+
         return view;
 
     }
@@ -75,9 +76,6 @@ public class LaneFragment extends Fragment {
         return fragment;
     }
 
-    public LinearLayout getLayout() {
-        return mLayout;
-    }
 
     private void setLane(Lane lane) {
         if (myLane == null) {
@@ -91,7 +89,13 @@ public class LaneFragment extends Fragment {
     }
 
 
-    private int getIndexAtPosition(int x, int y) {
+    @Override
+    public LinearLayout getLayout() {
+        return mLayout;
+    }
+
+    @Override
+    public int getIndexAtPosition(int x, int y) {
 
 //        Log.d(TAG, "printPositions: ChildCount = " + mLayout.getChildCount());
 
@@ -108,99 +112,5 @@ public class LaneFragment extends Fragment {
         return -1;
     }
 
-
-    class LaneOnDragListener implements View.OnDragListener {
-        private final String TAG = LaneOnDragListener.class.getSimpleName();
-
-        View draggedView = null;
-
-
-        @Override
-        public boolean onDrag(View v, DragEvent event) {
-
-            int action = event.getAction();
-            int x, y, index;
-
-            switch (action) {
-
-                case DragEvent.ACTION_DRAG_STARTED:
-
-                    draggedView = (View) event.getLocalState();
-
-                    if(v == draggedView.getParent()) {
-                        Log.d(TAG, "onDrag: ACTION_DRAG_STARTED -> " + draggedView);
-
-                        x = (int) event.getX();
-                        y = (int) event.getY();
-
-
-                        MainActivity.draggedViewParent = v;
-                        MainActivity.draggedTileIndex = getIndexAtPosition(x, y);
-
-                        Log.d(TAG, "onDrag: dVP: " + MainActivity.draggedViewParent.toString() +
-                                " dTIndex: " + MainActivity.draggedTileIndex);
-                    }
-                    break;
-
-                case DragEvent.ACTION_DRAG_LOCATION:
-
-                    x = (int) event.getX();
-                    y = (int) event.getY();
-
-                    index = getIndexAtPosition(x, y);
-
-                    if (((LinearLayout) draggedView.getParent()).indexOfChild(draggedView) != index) {
-
-                        ((LinearLayout) draggedView.getParent()).removeView(draggedView);
-
-                        mLayout.addView(draggedView, index);
-                    }
-
-                    break;
-
-                case DragEvent.ACTION_DROP:
-
-
-                    x = (int) event.getX();
-                    y = (int) event.getY();
-
-                    index = getIndexAtPosition(x, y);
-
-                    Log.d(TAG, "onDrag: ACTION_DROP -> " + draggedView + " move to index " + index + " " + mLayout.getId());
-
-                    break;
-
-
-                case DragEvent.ACTION_DRAG_ENDED:
-//                    Log.d(TAG, "onDrag: ACTION_DRAG_ENDED -> " + draggedView + " getResult(): " +  event.getResult());
-
-
-                    if(draggedView.getParent() == null){
-                        Log.d(TAG, "onDrag: getParent() == null put back to " + MainActivity.draggedViewParent);
-                        ((LinearLayout) MainActivity.draggedViewParent).addView(draggedView, MainActivity.draggedTileIndex);
-                    }
-
-                    break;
-
-                case DragEvent.ACTION_DRAG_ENTERED:
-//                    Log.d(TAG, "onDrag: ACTION_DRAG_ENTERED -> " + draggedView + " (" + v + ")");
-
-                    if (draggedView.getParent() == null) {
-                        ((LinearLayout) v).addView(draggedView);
-                    }
-
-                    break;
-                case DragEvent.ACTION_DRAG_EXITED:
-
-
-//                    Log.d(TAG, "onDrag: ACTION_DRAG_EXITED -> " + draggedView + " (" + v + ")");
-
-                    ((LinearLayout) v).removeView(draggedView);
-                    break;
-            }
-
-            return true;
-        }
-    }
 
 }

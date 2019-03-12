@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private TileSetFragment fragTileSet;
 
     private LaneFragment laneFragment;
+    private LaneFragment laneFragment2;
     private LinearLayout llTileSet;
     private LinearLayout llPlayground;
     private ScrollView svVertical;
@@ -69,9 +70,6 @@ public class MainActivity extends AppCompatActivity {
         TilePool tilePool = new TilePool();
         TileSet tiles = new TileSet();
 
-        Lane lane = new Lane();
-
-
         for (int i = 0; i < 14; i++) {
 
             tiles.addTile(tilePool.getTile());
@@ -80,7 +78,13 @@ public class MainActivity extends AppCompatActivity {
 
         fragTileSet = TileSetFragment.newInstance(tiles);
 
+        getSupportFragmentManager().beginTransaction().
+                add(R.id.ll_tile_set, fragTileSet, "fragTileSet").
+                commit();
 
+
+
+        Lane lane = new Lane();
 
         lane.addTile(new Tile(Color.RED,10));
         lane.addTile(new Tile(Color.RED,3));
@@ -91,12 +95,6 @@ public class MainActivity extends AppCompatActivity {
         lane.addTile(new Tile(Color.RED,7));
 
         laneFragment = LaneFragment.newInstance(lane);
-
-
-        getSupportFragmentManager().beginTransaction().
-                add(R.id.ll_tile_set, fragTileSet, "fragTileSet").
-                commit();
-
 
 
         llPlayground.post(() -> {
@@ -112,6 +110,30 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        lane = new Lane();
+
+        lane.addTile(new Tile(Color.BLUE,2));
+        lane.addTile(new Tile(Color.BLUE,7));
+        lane.addTile(new Tile(Color.BLUE,12));
+        lane.addTile(new Tile(Color.BLUE,4));
+        lane.addTile(new Tile(Color.BLUE,3));
+
+        lane.addTile(new Tile(Color.BLUE,9));
+
+        laneFragment2 = LaneFragment.newInstance(lane);
+
+
+        llPlayground.post(() -> {
+            getSupportFragmentManager().beginTransaction().
+                    add(R.id.ll_playground, laneFragment2, "laneFragment2").
+                    commit();
+
+        });
+
+        llPlayground.post(() -> {
+            llPlayground.addView(getSpace());
+
+        });
     }
 
     private Space getSpace() {
