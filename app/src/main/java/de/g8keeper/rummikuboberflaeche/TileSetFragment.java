@@ -85,10 +85,12 @@ public class TileSetFragment extends Fragment implements ITileDragDrop{
 
         mLayout.removeAllViews();
 
-        for(Tile tile: myTileSet){
-            mLayout.addView(TileView.newInstance(getContext(),tile));
-        }
+        if(myTileSet != null) {
 
+            for (Tile tile : myTileSet) {
+                mLayout.addView(TileView.newInstance(getContext(), tile));
+            }
+        }
     }
 
     public static TileSetFragment newInstance(TileSet tileSet) {
@@ -119,9 +121,6 @@ public class TileSetFragment extends Fragment implements ITileDragDrop{
     @Override
     public int getIndexAtPosition(int x, int y) {
 
-//        Log.d(TAG, "printPositions: ChildCount = " + mLayout.getChildCount());
-
-
         for (int i = 0; i < mLayout.getChildCount(); i++) {
 
             View view = mLayout.getChildAt(i);
@@ -137,7 +136,8 @@ public class TileSetFragment extends Fragment implements ITileDragDrop{
 
     @Override
     public void synchronize() {
-        Log.d(TAG, "synchronize!");
+
         synchronizeTileSet();
+
     }
 }

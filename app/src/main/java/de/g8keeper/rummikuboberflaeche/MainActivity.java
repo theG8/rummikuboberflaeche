@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
                     virtualRect.set(0, 0, visibleRect.right - visibleRect.left, visibleRect.bottom - visibleRect.top);
                     pos.set(x - (visibleRect.left - offset.x), y - (visibleRect.top - offset.y));
 
-                    Log.d(TAG, "position: " + pos.x + ", " + pos.y + " visRect: " + visibleRect + " ofs: " + offset + " vir: " + virtualRect);
+//                    Log.d(TAG, "position: " + pos.x + ", " + pos.y + " visRect: " + visibleRect + " ofs: " + offset + " vir: " + virtualRect);
 
                     // left
                     if (pos.x < scrollBorder) {

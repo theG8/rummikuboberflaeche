@@ -182,7 +182,7 @@ public class Tile implements Comparable<Tile>, IEvaluable {
     public String toString() {
 
 //	return !isJoker() ? "[" + this.color() + " " + this.value() + "]" : "[Joker(" + this.color() + " " + this.value() + ")]";
-        return !isJoker() ? "Tile(" + this.getColor() + " " + this.getValue() + ")" : "Tile(Joker)";
+        return !isJoker() ? "(" + this.getColor() + " " + this.getValue() + ")" : "(Joker)";
     }
 
     @Override

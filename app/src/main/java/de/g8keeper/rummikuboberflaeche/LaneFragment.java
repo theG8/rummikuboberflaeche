@@ -83,8 +83,11 @@ public class LaneFragment extends Fragment implements ITileDragDrop {
 
         mLayout.removeAllViews();
 
-        for (Tile tile : myLane) {
-            mLayout.addView(TileView.newInstance(getContext(), tile));
+        if(myLane != null) {
+
+            for (Tile tile : myLane) {
+                mLayout.addView(TileView.newInstance(getContext(), tile));
+            }
         }
 
     }
@@ -118,16 +121,11 @@ public class LaneFragment extends Fragment implements ITileDragDrop {
     @Override
     public int getIndexAtPosition(int x, int y) {
 
-//        Log.d(TAG, "printPositions: ChildCount = " + mLayout.getChildCount());
-
-
-
-
         for (int i = 0; i < mLayout.getChildCount(); i++) {
 
             View view = mLayout.getChildAt(i);
             Rect rect = new Rect(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());
-//            Log.d(TAG, "position " + i + " -> " + view.toString() + " " + rect);
+
             if (rect.contains(x, y)) {
                 return i;
             }
@@ -138,7 +136,8 @@ public class LaneFragment extends Fragment implements ITileDragDrop {
 
     @Override
     public void synchronize() {
-        Log.d(TAG, "synchronize!");
+
         synchronizeLane();
+
     }
 }
