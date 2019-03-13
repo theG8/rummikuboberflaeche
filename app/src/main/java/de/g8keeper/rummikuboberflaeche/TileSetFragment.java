@@ -1,6 +1,7 @@
 package de.g8keeper.rummikuboberflaeche;
 
 
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -120,11 +121,12 @@ public class TileSetFragment extends Fragment implements ITileDragDrop{
 
 //        Log.d(TAG, "printPositions: ChildCount = " + mLayout.getChildCount());
 
+
         for (int i = 0; i < mLayout.getChildCount(); i++) {
 
             View view = mLayout.getChildAt(i);
             Rect rect = new Rect(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());
-//            Log.d(TAG, "position " + i + " -> " + view.toString() + " " + rect);
+            Log.d(TAG, "position " + i + " -> " + view.toString() + " " + rect);
             if (rect.contains(x, y)) {
                 return i;
             }

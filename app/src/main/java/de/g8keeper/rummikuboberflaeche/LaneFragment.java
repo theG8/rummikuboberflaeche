@@ -1,6 +1,7 @@
 package de.g8keeper.rummikuboberflaeche;
 
 
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -118,6 +119,9 @@ public class LaneFragment extends Fragment implements ITileDragDrop {
     public int getIndexAtPosition(int x, int y) {
 
 //        Log.d(TAG, "printPositions: ChildCount = " + mLayout.getChildCount());
+
+
+
 
         for (int i = 0; i < mLayout.getChildCount(); i++) {
 

@@ -1,5 +1,6 @@
 package de.g8keeper.rummikuboberflaeche;
 
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
@@ -14,6 +15,7 @@ public class MainOnDragListener implements View.OnDragListener {
 
     private static final String TAG = MainOnDragListener.class.getSimpleName();
     private static View draggedTileParent;
+    private static ITileDragDrop draggedTileParentFragment;
     private static int draggedTileIndex;
     private static int dragAction;
 
@@ -24,6 +26,7 @@ public class MainOnDragListener implements View.OnDragListener {
 
 
     static {
+        draggedTileParentFragment = null;
         draggedTileParent = null;
         draggedTileIndex = -1;
         dragAction = DRAG_ACTION_UNKNOWN;
@@ -59,17 +62,22 @@ public class MainOnDragListener implements View.OnDragListener {
                 draggedView = (View) event.getLocalState();
 
                 if (v == draggedView.getParent()) {
-                    Log.d(TAG, "onDrag: ACTION_DRAG_STARTED -> " + draggedView);
+
 
                     x = (int) event.getX();
                     y = (int) event.getY();
 
 
-                    draggedTileParent = v;
+                    Log.d(TAG, "onDrag: ACTION_DRAG_STARTED -> " + draggedView + "(" + x  + ", " + y + ")");
+
+                    draggedTileParentFragment = parentFragment;
+                    draggedTileParent = draggedTileParentFragment.getLayout();
+//                    draggedTileParent = v;
                     draggedTileIndex = parentFragment.getIndexAtPosition(x, y);
+
                     dragAction = isTileSet ? DRAG_ACTION_FROM_TILESET : DRAG_ACTION_FROM_LANE;
 
-                    Log.d(TAG, "dragAction: " + dragAction + " TileParent: " + draggedTileParent.toString() +
+                    Log.d(TAG, "dragAction: " + dragAction + " TileParent: " + draggedTileParentFragment.getLayout().toString() +
                             " TileIndex: " + draggedTileIndex);
                 }
                 break;
@@ -125,9 +133,9 @@ public class MainOnDragListener implements View.OnDragListener {
 
                 if (draggedView.getParent() == null) {
                     Log.d(TAG, "onDrag: getParent() == null put back to " +
-                            draggedTileParent);
+                            draggedTileParentFragment.getLayout().toString());
 
-                    ((LinearLayout) draggedTileParent).
+                    draggedTileParentFragment.getLayout().
                             addView(draggedView, draggedTileIndex);
                 }
 
@@ -156,11 +164,11 @@ public class MainOnDragListener implements View.OnDragListener {
                 //                    Log.d(TAG, "onDrag: ACTION_DRAG_EXITED -> " + draggedView + " (" + v + ")");
 
                 if (dragAction != DRAG_ACTION_UNKNOWN) {
-                    if (!isTileSet) {
+
 
                         ((LinearLayout) v).removeView(draggedView);
 
-                    }
+
                 }
 
 
