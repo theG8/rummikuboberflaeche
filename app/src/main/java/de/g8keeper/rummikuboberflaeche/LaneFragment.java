@@ -58,16 +58,36 @@ public class LaneFragment extends Fragment implements ITileDragDrop {
 
         view.setOnDragListener(new MainOnDragListener(this));
 
-        myLane.sort();
 
-        for (Tile tile : myLane) {
-            view.addView(TileView.newInstance(getContext(), tile));
-        }
-
+        refreshUI();
 
         return view;
 
     }
+
+    private void synchronizeLane(){
+
+        int childCount = mLayout.getChildCount();
+
+        myLane.clear();
+
+        if(childCount > 0) {
+            for (int i = 0; i< childCount;i++){
+                myLane.addTile(((TileView) mLayout.getChildAt(i)).getTile());
+            }
+        }
+    }
+
+    private void refreshUI(){
+
+        mLayout.removeAllViews();
+
+        for (Tile tile : myLane) {
+            mLayout.addView(TileView.newInstance(getContext(), tile));
+        }
+
+    }
+
 
     public static LaneFragment newInstance(Lane lane) {
         LaneFragment fragment = new LaneFragment();
@@ -84,7 +104,7 @@ public class LaneFragment extends Fragment implements ITileDragDrop {
 
     }
 
-    public Lane getMyLane() {
+    public Lane getLane() {
         return myLane;
     }
 
@@ -112,5 +132,9 @@ public class LaneFragment extends Fragment implements ITileDragDrop {
         return -1;
     }
 
-
+    @Override
+    public void synchronize() {
+        Log.d(TAG, "synchronize!");
+        synchronizeLane();
+    }
 }

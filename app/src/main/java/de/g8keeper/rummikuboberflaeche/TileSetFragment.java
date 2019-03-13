@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +27,7 @@ public class TileSetFragment extends Fragment implements ITileDragDrop{
 
     private LinearLayout mLayout;
 
-    private TileSet myTiles;
+    private TileSet myTileSet;
 
 
     @Nullable
@@ -61,12 +60,33 @@ public class TileSetFragment extends Fragment implements ITileDragDrop{
 
 
 
-        for(Tile tile: myTiles){
-            view.addView(TileView.newInstance(getContext(),tile));
-        }
 
+        refreshUI();
 
         return view;
+
+    }
+
+    private void synchronizeTileSet(){
+
+        int childCount = mLayout.getChildCount();
+
+        myTileSet.clear();
+
+        if(childCount > 0) {
+            for (int i = 0; i< childCount;i++){
+                myTileSet.addTile(((TileView) mLayout.getChildAt(i)).getTile());
+            }
+        }
+    }
+
+    private void refreshUI(){
+
+        mLayout.removeAllViews();
+
+        for(Tile tile: myTileSet){
+            mLayout.addView(TileView.newInstance(getContext(),tile));
+        }
 
     }
 
@@ -80,14 +100,14 @@ public class TileSetFragment extends Fragment implements ITileDragDrop{
 
 
     private void setTileSet(TileSet tileSet) {
-        if (myTiles == null) {
-            myTiles = tileSet;
+        if (myTileSet == null) {
+            myTileSet = tileSet;
         }
 
     }
 
     public TileSet getTileSet() {
-        return myTiles;
+        return myTileSet;
     }
 
     @Override
@@ -113,6 +133,9 @@ public class TileSetFragment extends Fragment implements ITileDragDrop{
         return -1;
     }
 
-
-
+    @Override
+    public void synchronize() {
+        Log.d(TAG, "synchronize!");
+        synchronizeTileSet();
+    }
 }

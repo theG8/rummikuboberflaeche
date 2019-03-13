@@ -5,6 +5,9 @@
     <color name="colorAccent">#D81B60</color>
 
 
+    <!-- test-colors -->
+    <color name="test_background">#88FF0000</color>
+
     <!-- tileSet-colors -->
     <color name="tile_set_background">#27FFFF00</color>
 

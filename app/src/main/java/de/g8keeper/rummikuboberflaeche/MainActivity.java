@@ -62,6 +62,10 @@ public class MainActivity extends AppCompatActivity {
         llPlayground.setOnDragListener(new ScrollOnDragListener());
 
 
+        testCode();
+    }
+
+    private void testCode(){
         // ******************************************************************************************
         // Testcode:                                                                                *
         // ******************************************************************************************
@@ -136,11 +140,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
     private Space getSpace() {
         Space space = new Space(this);
         space.setId(new Random().nextInt());
         space.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 25));
         return space;
+    }
+
+    public void onClick(View view) {
+
+
+
     }
 
 

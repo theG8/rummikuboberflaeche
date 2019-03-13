@@ -164,7 +164,7 @@ public class TileView extends View {
         return tv;
     }
 
-    private Tile getTile() {
+    public Tile getTile() {
         return mTile;
     }
 
