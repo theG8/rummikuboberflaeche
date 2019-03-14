@@ -6,7 +6,8 @@ import java.util.Objects;
 public class Player implements Serializable {
     
     private static int count = 0;
-    
+
+    private long id;
     private String name;
     private TileSet tileSet;
     
@@ -21,6 +22,14 @@ public class Player implements Serializable {
 	this(name);
 	this.tileSet = tileSet;
     }
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
 
     public String getName() {
         return name;
@@ -40,8 +49,15 @@ public class Player implements Serializable {
 
     @Override 
     public String toString() {
-	return "\"" + this.name + "\":\n" + PrintUtils.getPrintableTiles(this.tileSet);
+
+		return "Player(" + this.id + ", " + this.name + ")";
     }
+
+	public String toStringWithTiles() {
+
+		return "Player(" + this.id + ", " + this.name + ") {" + this.tileSet + "}";
+	}
+
     
     @Override
     public int hashCode() {
@@ -76,12 +92,7 @@ public class Player implements Serializable {
 	}
 	return true;
     }
-    
-    
-   
-    
-    
-    
-    
-    
+
+
+
 }
