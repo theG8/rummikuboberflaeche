@@ -1,5 +1,6 @@
 package de.g8keeper.rummikub;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -7,7 +8,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-public class TileSet implements IEvaluable, Iterable<Tile> {
+public class TileSet implements IEvaluable, Iterable<Tile>, Serializable {
 
 
     protected List<Tile> tiles;

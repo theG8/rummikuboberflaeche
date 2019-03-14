@@ -1,8 +1,9 @@
 package de.g8keeper.rummikub;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Tile implements Comparable<Tile>, IEvaluable {
+public class Tile implements Comparable<Tile>, IEvaluable, Serializable {
 
     public static final int MAX_VALUE;
     public static final int MIN_VALUE;

@@ -1,8 +1,10 @@
 package de.g8keeper.rummikub;
 
+import java.io.Serializable;
+
 import de.g8keeper.rummikuboberflaeche.R;
 
-public enum Color {
+public enum Color implements Serializable {
     RED("rot", R.color.tile_red),
     YELLOW("gelb", R.color.tile_yellow),
     BLUE("blau", R.color.tile_blue),

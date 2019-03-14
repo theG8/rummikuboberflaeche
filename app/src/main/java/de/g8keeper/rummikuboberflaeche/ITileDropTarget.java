@@ -3,7 +3,7 @@ package de.g8keeper.rummikuboberflaeche;
 import android.view.View;
 import android.widget.LinearLayout;
 
-public interface ITileDragDrop {
+public interface ITileDropTarget {
 
     int getIndexAtPosition(int x, int y);
 

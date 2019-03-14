@@ -1,8 +1,9 @@
 package de.g8keeper.rummikub;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Player {
+public class Player implements Serializable {
     
     private static int count = 0;
     

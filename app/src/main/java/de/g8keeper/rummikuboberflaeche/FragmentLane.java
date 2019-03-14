@@ -1,34 +1,30 @@
 package de.g8keeper.rummikuboberflaeche;
 
 
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 
+import de.g8keeper.rummikub.Lane;
 import de.g8keeper.rummikub.Tile;
-import de.g8keeper.rummikub.TileSet;
 
 
-public class TileSetFragment extends Fragment implements ITileDragDrop{
+public class FragmentLane extends Fragment implements ITileDropTarget {
 
-    private static final String TAG = TileSetFragment.class.getSimpleName();
+    private static final String TAG = FragmentLane.class.getSimpleName();
 
 //    private static View draggedViewParent = null;
 //    private static int draggedTileIndex = -1;
 
-
     private LinearLayout mLayout;
-
-    private TileSet myTileSet;
+    private Lane myLane;
 
 
     @Nullable
@@ -40,26 +36,25 @@ public class TileSetFragment extends Fragment implements ITileDragDrop{
         mLayout = view;
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
 
-        view.setMinimumWidth(container.getWidth());
 
         view.setLayoutParams(params);
 
-        int pad = getResources().getDimensionPixelOffset(R.dimen.padding_tile_set);
+        int pad = getResources().getDimensionPixelOffset(R.dimen.padding_standard);
         view.setPadding(pad, pad, pad, pad);
 
-
+        view.setMinimumWidth(getResources().getDimensionPixelSize(R.dimen.tile_width) +
+                getResources().getDimensionPixelSize(R.dimen.tile_margin));
+        view.setMinimumHeight((int) (view.getMinimumWidth() * 1.4));
 
         view.setOrientation(LinearLayout.HORIZONTAL);
 
-        view.setBackgroundColor(getContext().getColor(R.color.tile_set_background));
+        view.setBackgroundColor(getContext().getColor(R.color.lane_background));
 
 
-        view.setOnDragListener(new MainOnDragListener(this));
-
-
+        view.setOnDragListener(new TileOnDragListener(this));
 
 
         refreshUI();
@@ -68,15 +63,15 @@ public class TileSetFragment extends Fragment implements ITileDragDrop{
 
     }
 
-    private void synchronizeTileSet(){
+    private void synchronizeLane(){
 
         int childCount = mLayout.getChildCount();
 
-        myTileSet.clear();
+        myLane.clear();
 
         if(childCount > 0) {
             for (int i = 0; i< childCount;i++){
-                myTileSet.addTile(((TileView) mLayout.getChildAt(i)).getTile());
+                myLane.addTile(((TileView) mLayout.getChildAt(i)).getTile());
             }
         }
     }
@@ -85,36 +80,38 @@ public class TileSetFragment extends Fragment implements ITileDragDrop{
 
         mLayout.removeAllViews();
 
-        if(myTileSet != null) {
+        if(myLane != null) {
 
-            for (Tile tile : myTileSet) {
+            for (Tile tile : myLane) {
                 mLayout.addView(TileView.newInstance(getContext(), tile));
             }
         }
+
     }
 
-    public static TileSetFragment newInstance(TileSet tileSet) {
-        TileSetFragment fragment = new TileSetFragment();
-        fragment.setTileSet(tileSet);
+
+    public static FragmentLane newInstance(Lane lane) {
+        FragmentLane fragment = new FragmentLane();
+        fragment.setLane(lane);
 
         return fragment;
     }
 
 
-
-    private void setTileSet(TileSet tileSet) {
-        if (myTileSet == null) {
-            myTileSet = tileSet;
+    private void setLane(Lane lane) {
+        if (myLane == null) {
+            myLane = lane;
         }
 
     }
 
-    public TileSet getTileSet() {
-        return myTileSet;
+    public Lane getLane() {
+        return myLane;
     }
 
+
     @Override
-    public LinearLayout getLayout(){
+    public LinearLayout getLayout() {
         return mLayout;
     }
 
@@ -125,7 +122,7 @@ public class TileSetFragment extends Fragment implements ITileDragDrop{
 
             View view = mLayout.getChildAt(i);
             Rect rect = new Rect(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());
-            Log.d(TAG, "position " + i + " -> " + view.toString() + " " + rect);
+
             if (rect.contains(x, y)) {
                 return i;
             }
@@ -137,7 +134,7 @@ public class TileSetFragment extends Fragment implements ITileDragDrop{
     @Override
     public void synchronize() {
 
-        synchronizeTileSet();
+        synchronizeLane();
 
     }
 }

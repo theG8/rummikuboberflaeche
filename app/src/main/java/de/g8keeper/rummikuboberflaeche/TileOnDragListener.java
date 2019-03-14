@@ -6,20 +6,20 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 
-public class MainOnDragListener implements View.OnDragListener {
+public class TileOnDragListener implements View.OnDragListener {
 
     public static final int DRAG_ACTION_UNKNOWN = 0;
     public static final int DRAG_ACTION_FROM_TILESET = 1;
     public static final int DRAG_ACTION_FROM_LANE = 2;
 
-    private static final String TAG = MainOnDragListener.class.getSimpleName();
+    private static final String TAG = TileOnDragListener.class.getSimpleName();
 
-    private static ITileDragDrop draggedTileParentFragment;
+    private static ITileDropTarget draggedTileParentFragment;
     private static int draggedTileIndex;
     private static int dragAction;
 
 
-    private ITileDragDrop parentFragment;
+    private ITileDropTarget parentFragment;
     private boolean isTileSet;
     private View draggedView;
 
@@ -31,15 +31,15 @@ public class MainOnDragListener implements View.OnDragListener {
     }
 
 
-    public MainOnDragListener(ITileDragDrop parentFragment) {
+    public TileOnDragListener(ITileDropTarget parentFragment) {
 
-        if (parentFragment instanceof TileSetFragment) {
+        if (parentFragment instanceof FragmentTileSet) {
             isTileSet = true;
-        } else if (parentFragment instanceof LaneFragment) {
+        } else if (parentFragment instanceof FragmentLane) {
             isTileSet = false;
         } else {
             throw new IllegalArgumentException(TAG +
-                    " parentFragment != TileSetFragment && parentFragment != LaneFragment");
+                    " parentFragment != FragmentTileSet && parentFragment != FragmentLane");
         }
 
         this.parentFragment = parentFragment;
