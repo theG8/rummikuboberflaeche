@@ -36,13 +36,13 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String TBL_LANES = "tblLanes";
     public static final String LANES_GAME_ID = "id_game";
     public static final String LANES_POSITION = "pos";
-    public static final String LANES_TILES = "tiles";
+    public static final String LANES_TILES = "mTiles";
 
 
     public static final String TBL_TILESETS = "tblTileSets";
     public static final String TILESETS_GAME_ID = "id_game";
     public static final String TILESETS_PLAYER_ID = "id_player";
-    public static final String TILESETS_TILES = "tiles";
+    public static final String TILESETS_TILES = "mTiles";
 
 
     public DBHelper(@Nullable Context context) {

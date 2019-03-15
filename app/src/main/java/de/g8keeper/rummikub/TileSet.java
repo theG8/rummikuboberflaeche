@@ -11,68 +11,99 @@ import java.util.Objects;
 public class TileSet implements IEvaluable, Iterable<Tile>, Serializable {
 
 
-    protected List<Tile> tiles;
+    protected List<Tile> mTiles;
+
 
     public TileSet() {
         // initialize this with new ArrayList<Tile>
-        this(new ArrayList<Tile>());
+        this(new ArrayList<>());
     }
 
     public TileSet(List<Tile> list) {
 
-        tiles = list;
+        mTiles = list;
+    }
+
+    public TileSet(byte[] bytearray){
+        List<Tile> tmp = new ArrayList<>();
+
+        if(bytearray.length > 0){
+            for(byte b:bytearray){
+                tmp.add(new Tile(b));
+            }
+        }
+
+        mTiles = tmp;
+    }
+
+
+    private static byte[] getByterepresentation(TileSet tileSet) {
+        byte[] byteArray = new byte[tileSet.size()];
+
+        int i = 0;
+
+        for (Tile tile : tileSet) {
+            byteArray[i++] = tile.toByte();
+        }
+
+        return byteArray;
     }
 
     public void addTile(Tile tile) {
 
-        // add tile to tiles
-        tiles.add(tile);
+        // add tile to mTiles
+        mTiles.add(tile);
     }
 
     public void addTile(int index, Tile tile) {
-        // add tile to tiles at specified index-point
-        tiles.add(index, tile);
+        // add tile to mTiles at specified index-point
+        mTiles.add(index, tile);
 
     }
 
     public Tile removeTile(int index) {
-        // remove tile at tiles(index)
-        return tiles.remove(index);
+        // remove tile at mTiles(index)
+        return mTiles.remove(index);
     }
 
-    public void clear(){
-        // remove all tiles
-        tiles.clear();
+    public void clear() {
+        // remove all mTiles
+        mTiles.clear();
     }
 
     public Tile tileAt(int index) {
         // return Tile at index-position
-        return tiles.get(index);
+        return mTiles.get(index);
     }
 
     public int size() {
-        return tiles.size();
+        return mTiles.size();
     }
 
     public void sort() {
         // call requires API level 24....
-//        tiles.sort((a, b) -> a.compareTo(b));
+//        mTiles.sort((a, b) -> a.compareTo(b));
 
-        Collections.sort(tiles,(a, b) -> a.compareTo(b));
+        Collections.sort(mTiles, (a, b) -> a.compareTo(b));
 
     }
 
+    public byte[] toBytearray(){
+        return getByterepresentation(this);
+    }
+
+
     @Override
     public String toString() {
-        return tiles.toString();
+        return mTiles.toString();
     }
 
     @Override
     public int getPoints() {
         int points = 0;
 
-        // iterate over tiles
-        for (Tile t : tiles) {
+        // iterate over mTiles
+        for (Tile t : mTiles) {
             // add point-value of every tile to points
             points += t.getPoints();
         }
@@ -83,7 +114,7 @@ public class TileSet implements IEvaluable, Iterable<Tile>, Serializable {
     @Override
     public Iterator<Tile> iterator() {
 
-        return new TileItr(tiles);
+        return new TileItr(mTiles);
     }
 
     class TileItr implements Iterator<Tile> {
@@ -117,7 +148,7 @@ public class TileSet implements IEvaluable, Iterable<Tile>, Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(tiles);
+        return Objects.hash(mTiles);
     }
 
     @Override
@@ -132,11 +163,11 @@ public class TileSet implements IEvaluable, Iterable<Tile>, Serializable {
             return false;
         }
         TileSet other = (TileSet) obj;
-        if (tiles == null) {
-            if (other.tiles != null) {
+        if (mTiles == null) {
+            if (other.mTiles != null) {
                 return false;
             }
-        } else if (!tiles.equals(other.tiles)) {
+        } else if (!mTiles.equals(other.mTiles)) {
             return false;
         }
         return true;

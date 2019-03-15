@@ -5,50 +5,109 @@ import java.util.Objects;
 
 public class Tile implements Comparable<Tile>, IEvaluable, Serializable {
 
+    public static final byte BYTE_JOKER = 15; // -> 00001111
+
     public static final int MAX_VALUE;
     public static final int MIN_VALUE;
 
     static {
-        // set the highest/lowest value, a tile can get
+        // set the highest/lowest mValue, a tile can get
         MAX_VALUE = 13;
         MIN_VALUE = 1;
     }
 
 
-    private Color color; // the color-value of the tile
-    private int value; // the number-value of the tile
-    private boolean joker = false; // represents the joker-state of this tile
+    private Color mColor; // the mColor-mValue of the tile
+    private int mValue; // the number-mValue of the tile
+    private boolean mIsJoker = false; // represents the mIsJoker-state of this tile
 
 
-    // use this constructor, to setup a normal (not joker) tile
+    // use this constructor, to setup a normal (not mIsJoker) tile
     public Tile(Color color, int value) {
-        // set joker-state (for settig tiles value and color)
-        this.joker = true;
-        // set value and color of the tile
+        // set mIsJoker-state (for settig mTiles mValue and mColor)
+        this.mIsJoker = true;
+        // set mValue and mColor of the tile
         setValue(value);
         setColor(color);
 
-        // revoke the joker-state; make it a normal tile
-        this.joker = false;
+
+        this.mIsJoker = false;
     }
 
-    // when creating a joker-tile, use this constructor
+    // when creating a mIsJoker-tile, use this constructor
     public Tile(boolean isJoker) {
-        // set joker-state
-        this.joker = true;
-        // initialize value and color to [RED 1]. later, in a lane, these values are adjusted on the fly
-        // to the value this joker-tile represents
+        // set mIsJoker-state
+        this.mIsJoker = true;
+        // initialize mValue and mColor to [RED 1]. later, in a lane, these values are adjusted on the fly
+        // to the mValue this mIsJoker-tile represents
         setColor(Color.RED);
         setValue(MIN_VALUE);
     }
 
-    // a static function to get the next int-value in tiles ordering 
+    public Tile(byte b) {
+        Color color = null;
+        int value = 0;
+
+        if (b == BYTE_JOKER) {
+
+            this.mIsJoker = true;
+            setColor(Color.RED);
+            setValue(MIN_VALUE);
+
+        } else {
+
+            for (Color c : Color.values()) {
+
+                if((b & c.bitmask()) != 0){
+                    color = c;
+                    break;
+                }
+            }
+
+            if(color == null){
+                throw new IllegalArgumentException("error in Tile(byte)-constructor");
+            }
+
+            b = (byte) (b ^ color.bitmask());
+            if(b>0 && b<=13){
+                value = b;
+            } else {
+                throw new IllegalArgumentException("error in Tile(byte)-constructor. b(" + b + ") is not > 0 && <= 13");
+            }
+
+            this.mIsJoker = true;
+            setValue(value);
+            setColor(color);
+            this.mIsJoker = false;
+
+        }
+
+
+
+    }
+
+
+    private static byte getByteRepresentation(Tile tile) {
+        byte tmp = 0;
+
+        if (tile.isJoker()) {
+            tmp = BYTE_JOKER;
+        } else {
+            tmp = (byte) tile.getValue();
+
+            tmp = (byte) (tile.getColor().bitmask() | tmp);
+        }
+
+        return tmp;
+    }
+
+    // a static function to get the next int-mValue in mTiles ordering
     // (n+1; if (n = MAX_VALUE) n = MIN_VALUE) 
     public static int nextValue(int value) throws IllegalArgumentException {
 
         if (value > MAX_VALUE || value < MIN_VALUE)
             throw new IllegalArgumentException(
-                    "value muss zwischen MIN_VALUE(" + MIN_VALUE + ") und MAX_VALUE (" + MAX_VALUE + ") liegen");
+                    "mValue muss zwischen MIN_VALUE(" + MIN_VALUE + ") und MAX_VALUE (" + MAX_VALUE + ") liegen");
 
         if (value == MAX_VALUE) {
             return MIN_VALUE;
@@ -63,13 +122,13 @@ public class Tile implements Comparable<Tile>, IEvaluable, Serializable {
 
     }
 
-    // a static function to get the previous int-value in tiles ordering 
+    // a static function to get the previous int-mValue in mTiles ordering
     // (n-1; if (n = MIN_VALUE) n = MAX_VALUE)
     public static int previousValue(int value) throws IllegalArgumentException {
 
         if (value > MAX_VALUE || value < MIN_VALUE)
             throw new IllegalArgumentException(
-                    "value muss zwischen MIN_VALUE(" + MIN_VALUE + ") und MAX_VALUE (" + MAX_VALUE + ") liegen");
+                    "mValue muss zwischen MIN_VALUE(" + MIN_VALUE + ") und MAX_VALUE (" + MAX_VALUE + ") liegen");
 
         if (value == MIN_VALUE) {
             return MAX_VALUE;
@@ -83,8 +142,8 @@ public class Tile implements Comparable<Tile>, IEvaluable, Serializable {
         return previousValue(tile.getValue());
     }
 
-    // a static function to get the next color in tiles ordering 
-    // if color = BLACK (last color in colors) returns RED (first color in colors)
+    // a static function to get the next mColor in mTiles ordering
+    // if mColor = BLACK (last mColor in colors) returns RED (first mColor in colors)
     public static Color nextColor(Color color) {
 
         if (color.ordinal() == Color.values().length - 1) {
@@ -99,8 +158,8 @@ public class Tile implements Comparable<Tile>, IEvaluable, Serializable {
         return nextColor(tile.getColor());
     }
 
-    // a static function to get the previous color in tiles ordering 
-    // if color = RED (first color in colors) returns BLACK (last color in colors)
+    // a static function to get the previous mColor in mTiles ordering
+    // if mColor = RED (first mColor in colors) returns BLACK (last mColor in colors)
     public static Color previousColor(Color color) {
 
         if (color.ordinal() == 0) {
@@ -115,7 +174,7 @@ public class Tile implements Comparable<Tile>, IEvaluable, Serializable {
         return previousColor(tile.getColor());
     }
 
-    // returns the difference between two values of tiles.
+    // returns the difference between two values of mTiles.
     // in fact it is the difference from a, ascending to b. this means that, when b<a, 
     // the difference is ((a to MAX_VALUE) + (MIN_VALUE to b))
     public static int getDifference(int a, int b) {
@@ -134,34 +193,34 @@ public class Tile implements Comparable<Tile>, IEvaluable, Serializable {
         return getDifference(tileA.getValue(), tileB.getValue());
     }
 
-    // returns the color of the tile
+    // returns the mColor of the tile
     public Color getColor() {
-        return this.color;
+        return this.mColor;
     }
 
-    // sets, if tile is joker, the color of the tile
+    // sets, if tile is mIsJoker, the mColor of the tile
     public void setColor(Color color) {
-        // setting a color to a tile is just valid, when tile is a joker (isJoker())
+        // setting a mColor to a tile is just valid, when tile is a mIsJoker (isJoker())
         if (isJoker()) {
-            this.color = color;
+            this.mColor = color;
         } else {
             throw new IllegalArgumentException("Farbe kann nur gesetzt werden, wenn Spielstein Joker ist!");
         }
     }
 
-    // returns the value of the tile
+    // returns the mValue of the tile
     public int getValue() {
-        return this.value;
+        return this.mValue;
     }
 
-    // sets, if tile is joker, the value of the tile
+    // sets, if tile is mIsJoker, the mValue of the tile
     public void setValue(int value) throws IllegalArgumentException {
 
-        // setting a value to a tile is just valid, when tile is a joker (isJoker())
+        // setting a mValue to a tile is just valid, when tile is a mIsJoker (isJoker())
         if (isJoker()) {
-            // if value is between bounds (MIN_VALUE and MAX_VALUE; inclusive) set the new value
+            // if mValue is between bounds (MIN_VALUE and MAX_VALUE; inclusive) set the new mValue
             if (value <= MAX_VALUE && value >= MIN_VALUE) {
-                this.value = value;
+                this.mValue = value;
                 // ...if not, throw exception
             } else {
                 throw new IllegalArgumentException("Spielstein darf nur einen Wert zwischen 1 und 13 besitzen!");
@@ -172,24 +231,28 @@ public class Tile implements Comparable<Tile>, IEvaluable, Serializable {
         }
     }
 
-    // returns true, if tile is a joker, or false, if not
+    // returns true, if tile is a mIsJoker, or false, if not
     public boolean isJoker() {
 
-        return this.joker;
+        return this.mIsJoker;
+    }
+
+    public byte toByte() {
+        return getByteRepresentation(this);
     }
 
 
     @Override
     public String toString() {
 
-//	return !isJoker() ? "[" + this.color() + " " + this.value() + "]" : "[Joker(" + this.color() + " " + this.value() + ")]";
+//	return !isJoker() ? "[" + this.mColor() + " " + this.mValue() + "]" : "[Joker(" + this.mColor() + " " + this.mValue() + ")]";
         return !isJoker() ? "(" + this.getColor() + " " + this.getValue() + ")" : "(Joker)";
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(this.color, this.value);
+        return Objects.hash(this.mColor, this.mValue);
     }
 
     @Override
@@ -217,16 +280,16 @@ public class Tile implements Comparable<Tile>, IEvaluable, Serializable {
     @Override
     public int compareTo(Tile o) {
 
-        /*  natural ordering of tiles in rummikub is:
+        /*  natural ordering of mTiles in rummikub is:
          *
          *  [red 1], [red 2], ..., [red 13] followed by [YELLOW 1], ...,[YELLOW 13] followed by
          *  [BLUE 1], ...,[BLUE 13] followed by [BLACK 1], ...,[BLACK 13]
          */
 
-        // if this.color and o.color are different, return the result of the comparision of
-        // this.color and o.color
-        // if this.color and o.color are equal, return the result of the (integer-)comparision of
-        // this.value and o.value
+        // if this.mColor and o.mColor are different, return the result of the comparision of
+        // this.mColor and o.mColor
+        // if this.mColor and o.mColor are equal, return the result of the (integer-)comparision of
+        // this.mValue and o.mValue
 
         return this.getColor().compareTo(o.getColor()) == 0 ? Integer.compare(this.getValue(), o.getValue())
                 : this.getColor().compareTo(o.getColor());
@@ -235,8 +298,8 @@ public class Tile implements Comparable<Tile>, IEvaluable, Serializable {
 
     @Override
     public int getPoints() {
-        // returns the point-value of the tile. for normal tiles this is similar to the value of the tile.
-        // but if tile is a joker, its point-value is 20
+        // returns the point-mValue of the tile. for normal mTiles this is similar to the mValue of the tile.
+        // but if tile is a mIsJoker, its point-mValue is 20
         return isJoker() ? 20 : getValue();
     }
 }

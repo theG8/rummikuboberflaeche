@@ -2,20 +2,14 @@ package de.g8keeper.rummikuboberflaeche;
 
 import android.content.ClipData;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.DragEvent;
 import android.view.View;
-import android.widget.CheckedTextView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import de.g8keeper.rummikub.Color;
 import de.g8keeper.rummikub.Tile;
@@ -106,13 +100,13 @@ public class TileView extends View {
                 textColor = ContextCompat.getColor(getContext(), R.color.tile_joker);
                 valueText = "J";
             } else {
-                textColor = ContextCompat.getColor(getContext(), mTile.getColor().getColorId());
+                textColor = ContextCompat.getColor(getContext(), mTile.getColor().colorId());
                 valueText = Integer.toString(mTile.getValue());
             }
 
         } else {
             valueText = Integer.toString(Tile.MAX_VALUE);
-            textColor = ContextCompat.getColor(getContext(), Color.RED.getColorId());
+            textColor = ContextCompat.getColor(getContext(), Color.RED.colorId());
         }
 
 

@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 
-// PoolOfTiles is the pool from which the players get their tiles
+// PoolOfTiles is the pool from which the players get their mTiles
 // it contains twice the values Tile.MAX_VALUE (=1) to Tile.MIN_VALUE (=13) of each
-// color (RED, YELLOW, BLUE, BLACK) plus 2 joker, which means 106 tiles 
+// color (RED, YELLOW, BLUE, BLACK) plus 2 joker, which means 106 mTiles
 
 public class TilePool {
 

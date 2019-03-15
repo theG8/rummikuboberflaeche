@@ -10,11 +10,11 @@ import java.util.NoSuchElementException;
 public class Lane extends TileSet {
 
     private static final boolean DEBUG = false;
-    public static int MIN_TILES_TO_VERIFY; // minimum amount of tiles in a lane to verify
+    public static int MIN_TILES_TO_VERIFY; // minimum amount of mTiles in a lane to verify
 
     static {
         MIN_TILES_TO_VERIFY = 3; // in rummikub, a lane must contain a minimum of
-        // three tiles, to verify
+        // three mTiles, to verify
 
     }
 
@@ -29,7 +29,7 @@ public class Lane extends TileSet {
 
         super();
 
-        tiles = list;
+        mTiles = list;
     }
 
     public Lane(Lane lane) {
@@ -43,12 +43,16 @@ public class Lane extends TileSet {
 
     }
 
+    public Lane(byte[] bytearray){
+        super(bytearray);
+    }
+
 
     // adds a tile to the lane
     @Override
     public void addTile(Tile tile) {
 
-        // if tile is joker and the lane allready contains tiles, its value and color
+        // if tile is joker and the lane allready contains mTiles, its value and color
         // needs to be set
         // to the right values, based on the ordering of the lane
         if (tile.isJoker() && size() > 0) {
@@ -69,7 +73,7 @@ public class Lane extends TileSet {
     @Override
     public void addTile(int index, Tile tile) {
 
-        // if tile is joker and the lane allready contains tiles, its value and color
+        // if tile is joker and the lane allready contains mTiles, its value and color
         // needs to be set
         // to the right values, based on the ordering of the lane
         if (size() > 0) {
@@ -105,11 +109,11 @@ public class Lane extends TileSet {
     // returns true, if the lane is correct in the sense of the rummikub rules
     public boolean verify() {
 
-        // if ammount of tiles in this lane is smaller than MIN_TILES_TO_VERIFY
+        // if ammount of mTiles in this lane is smaller than MIN_TILES_TO_VERIFY
         if (size() < Lane.MIN_TILES_TO_VERIFY)
             return false;
 
-        // sort tiles to the correct order of a lane
+        // sort mTiles to the correct order of a lane
         sort();
 
         // if lane is a group... (i.e. [RED 1],[YELLOW 1],[BLUE 1])
@@ -129,9 +133,9 @@ public class Lane extends TileSet {
         } else if (isRun()) {
 
             int nextValue = tileAt(0).getValue();
-            // iterate over tiles and check if tiles are in coherent order
+            // iterate over mTiles and check if mTiles are in coherent order
 
-            for (Tile t : super.tiles) {
+            for (Tile t : super.mTiles) {
 
                 if (t.getValue() != nextValue) {
                     return false;
@@ -157,14 +161,14 @@ public class Lane extends TileSet {
 
         if (isSplitable()) {
 
-            tmp = super.tiles.subList(Lane.MIN_TILES_TO_VERIFY, size() - Lane.MIN_TILES_TO_VERIFY);
+            tmp = super.mTiles.subList(Lane.MIN_TILES_TO_VERIFY, size() - Lane.MIN_TILES_TO_VERIFY);
 
         }
 
         return tmp;
     }
 
-    // returns true, if lane could be/is a run... (all tiles are of the same color)
+    // returns true, if lane could be/is a run... (all mTiles are of the same color)
     // (i.e. [RED 1],[RED 2],[RED 3] (passes verify())
     // or [BLUE 3],[BLUE 6] (is also a run but fails verify())
 
@@ -191,7 +195,7 @@ public class Lane extends TileSet {
         return false;
     }
 
-    // returns true, if lane could be/is a group. (all tiles are of the same value)
+    // returns true, if lane could be/is a group. (all mTiles are of the same value)
     // (i.e. [RED 1],[YELLOW 1],[BLUE 1] (passes verify())
     // or [RED 1],[YELLOW 1] (is also a group but fails verify())
     // or [RED 1],[RED 1],[BLUE 1] (is also a group but fails verify())
@@ -254,11 +258,11 @@ public class Lane extends TileSet {
             boolean match = false; // match indicator for the ordering algorithm
 
             if (DEBUG) {
-                System.out.println(super.tiles);
+                System.out.println(super.mTiles);
             }
 
-            // iterate over tiles in this lane
-            for (Tile t : super.tiles) {
+            // iterate over mTiles in this lane
+            for (Tile t : super.mTiles) {
 
                 match = false; // reset match indicator
 
@@ -274,7 +278,7 @@ public class Lane extends TileSet {
                         System.out.println("tmpList -> " + tmpList);
                     }
 
-                    // iterate over tiles in tmpList
+                    // iterate over mTiles in tmpList
                     for (Tile tmpTile : tmpList) {
 
                         // if a tile that equals t, allready exists in tmpList...
@@ -313,8 +317,8 @@ public class Lane extends TileSet {
                 //
             }
 
-            // clearing the lanes tiles
-            super.tiles.clear();
+            // clearing the lanes mTiles
+            super.mTiles.clear();
 
             int count = 0; // just needed for DEBUG
 
@@ -328,14 +332,14 @@ public class Lane extends TileSet {
                     count++;
                     System.out.println("tmpList " + count + " -> " + tmpList);
                 }
-                // ...and put it into this lanes tiles
-                super.tiles.addAll(tmpList);
+                // ...and put it into this lanes mTiles
+                super.mTiles.addAll(tmpList);
             }
 
-            // finally, if nessisary, rotate tiles in this lane to get correct order
+            // finally, if nessisary, rotate mTiles in this lane to get correct order
             int sIndex = getStartIndex();
             if (sIndex != 0) {
-                Collections.rotate(super.tiles, -sIndex);
+                Collections.rotate(super.mTiles, -sIndex);
             }
         }
     }
@@ -380,6 +384,8 @@ public class Lane extends TileSet {
         return 0;
     }
 
+
+
     @Override
     public String toString() {
         return super.toString();
@@ -388,7 +394,7 @@ public class Lane extends TileSet {
     @Override
     public Iterator<Tile> iterator() {
 
-        return new TileItr(tiles);
+        return new TileItr(mTiles);
     }
 
     class TileItr implements Iterator<Tile> {
