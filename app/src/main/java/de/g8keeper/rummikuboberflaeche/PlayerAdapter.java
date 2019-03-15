@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -16,6 +17,9 @@ import java.util.List;
 import de.g8keeper.rummikub.Player;
 
 public class PlayerAdapter extends ArrayAdapter<Player> {
+
+    private static final String TAG = PlayerAdapter.class.getSimpleName();
+
 
 
     private int resourceView;
@@ -39,7 +43,7 @@ public class PlayerAdapter extends ArrayAdapter<Player> {
 
         convertView = ((Activity) context).getLayoutInflater().inflate(resourceView,parent,false);
 
-
+        Log.d(TAG, "getView: ");
 
         TextView tvName = convertView.findViewById(R.id.li_tv_name);
         TextView tvId = convertView.findViewById(R.id.li_tv_id);

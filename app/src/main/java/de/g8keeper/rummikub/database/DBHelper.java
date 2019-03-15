@@ -13,7 +13,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DB_NAME = "rummikub_db";
 
-    public static final int DB_VERSION = 1;
+    public static final int DB_VERSION = 2;
 
 
     public static final String TBL_PLAYER = "tblPlayer";
@@ -135,7 +135,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             Log.d(TAG, "Update Erfolgreich");
         } catch (RuntimeException e) {
-            Log.e(TAG, "Fehler beim Upgrade der Datenbank: ", e);
+            Log.e(TAG, "Fehler beim Update der Datenbank: ", e);
         }
 
     }

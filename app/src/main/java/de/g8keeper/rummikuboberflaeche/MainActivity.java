@@ -16,16 +16,20 @@ public class MainActivity extends AppCompatActivity {
 
     public void onButtonClick(View view) {
 
+        Intent intent;
+
         switch (view.getId()){
 
             case R.id.btn_start_game:
+                intent = new Intent(this, PlaygroundActivity.class);
+                startActivity(intent);
 
-                Toast.makeText(this, "Starten wurde gedrückt", Toast.LENGTH_SHORT).show();
+
                 break;
 
             case R.id.btn_configure_players:
 
-                Intent intent = new Intent(this, PlayersActivity.class);
+                intent = new Intent(this, PlayersActivity.class);
                 startActivity(intent);
 
                 break;

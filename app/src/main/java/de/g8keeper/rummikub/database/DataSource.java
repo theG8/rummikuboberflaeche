@@ -83,6 +83,28 @@ public class DataSource {
 
     }
 
+    public Player updatePlayer(long id, String name) {
+
+        ContentValues values = new ContentValues();
+
+        values.put(DBHelper.PLAYER_NAME, name);
+
+
+        db.update(DBHelper.TBL_PLAYER, values,
+                DBHelper.PLAYER_ID + "=" + id, null);
+
+
+        Cursor cursor = db.query(DBHelper.TBL_PLAYER,
+                columnsPlayer,
+                DBHelper.PLAYER_ID + "=" + id,
+                null, null, null, null);
+
+        cursor.moveToFirst();
+        Player player = cursorToPlayer(cursor);
+        cursor.close();
+
+        return player;
+    }
 
 
     public Player createPlayer(String name) {

@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/li_cl_ground"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -16,6 +17,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/sym_def_app_icon"
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
@@ -39,4 +41,5 @@
         app:layout_constraintStart_toEndOf="@+id/li_iv_image"
         app:layout_constraintTop_toBottomOf="@+id/li_tv_name"
         tools:text="ID" />
+
 </android.support.constraint.ConstraintLayout>
