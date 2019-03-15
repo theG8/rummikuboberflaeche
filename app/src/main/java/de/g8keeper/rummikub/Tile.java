@@ -58,18 +58,18 @@ public class Tile implements Comparable<Tile>, IEvaluable, Serializable {
 
             for (Color c : Color.values()) {
 
-                if((b & c.bitmask()) != 0){
+                if ((b & c.bitmask()) != 0) {
                     color = c;
                     break;
                 }
             }
 
-            if(color == null){
+            if (color == null) {
                 throw new IllegalArgumentException("error in Tile(byte)-constructor");
             }
 
             b = (byte) (b ^ color.bitmask());
-            if(b>0 && b<=13){
+            if (b > 0 && b <= 13) {
                 value = b;
             } else {
                 throw new IllegalArgumentException("error in Tile(byte)-constructor. b(" + b + ") is not > 0 && <= 13");
@@ -83,11 +83,24 @@ public class Tile implements Comparable<Tile>, IEvaluable, Serializable {
         }
 
 
-
     }
 
 
     private static byte getByteRepresentation(Tile tile) {
+
+        /*
+        	Byte-Representation eines Tiles
+
+            			(B)  (A)
+		                /    /
+            bits	1111 1111
+            nr->	8... ...1
+
+        	(A) -> tile-value (1-13)
+	        (B) -> tile-color (RED(16), YELLOW(32), BLUE(64), BLACK(-127))
+	        JOKER = 15 (00001111)
+         */
+
         byte tmp = 0;
 
         if (tile.isJoker()) {
