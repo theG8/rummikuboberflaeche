@@ -24,13 +24,13 @@ public class TileDemo {
         for (Color c : Color.values()) {
             for (int v = 1; v <= 13; v++) {
                 Tile tile = new Tile(c, v);
-                System.out.print(tile.toString() + "\t -> " + TestUtilitys.toBinaryString(tile.toByte()) + " =\t");
+                System.out.print(tile.toString() + "\t -> " + TestUtilities.toBinaryString(tile.toByte()) + " =\t");
                 System.out.println(new Tile(tile.toByte()));
             }
         }
 
         Tile tile = new Tile(true);
-        System.out.print(tile.toString() + "\t -> " + TestUtilitys.toBinaryString(tile.toByte()) + " =\t");
+        System.out.print(tile.toString() + "\t -> " + TestUtilities.toBinaryString(tile.toByte()) + " =\t");
         System.out.println(new Tile(tile.toByte()));
 
     }

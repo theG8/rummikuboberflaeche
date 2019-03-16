@@ -13,7 +13,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DB_NAME = "rummikub_db";
 
-    public static final int DB_VERSION = 2;
+    public static final int DB_VERSION = 1;
 
 
     public static final String TBL_PLAYER = "tblPlayer";
@@ -28,21 +28,23 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String GAME_END = "end"; //DATETIME
 
 
+
     public static final String TBL_PLAYERS = "tblPlayers";
     public static final String PLAYERS_GAME_ID = "id_game"; //INTEGER
     public static final String PLAYERS_PLAYER_ID = "id_player";
+    public static final String PLAYERS_TOKEN = "token";
 
 
     public static final String TBL_LANES = "tblLanes";
     public static final String LANES_GAME_ID = "id_game";
     public static final String LANES_POSITION = "pos";
-    public static final String LANES_TILES = "mTiles";
+    public static final String LANES_TILES = "tiles";
 
 
     public static final String TBL_TILESETS = "tblTileSets";
     public static final String TILESETS_GAME_ID = "id_game";
     public static final String TILESETS_PLAYER_ID = "id_player";
-    public static final String TILESETS_TILES = "mTiles";
+    public static final String TILESETS_TILES = "tiles";
 
 
     public DBHelper(@Nullable Context context) {
@@ -67,8 +69,9 @@ public class DBHelper extends SQLiteOpenHelper {
         sql.append(mkTBL(TBL_GAME,
                 mkCOL(GAME_ID, "INTEGER PRIMARY KEY AUTOINCREMENT"),
                 mkCOL(GAME_TITLE, "TEXT NOT NULL"),
-                mkCOL(GAME_START, "DATETIME"),
-                mkCOL(GAME_END, "DATETIME")
+                mkCOL(GAME_START, "INTEGER DEFAULT = 0"),
+                mkCOL(GAME_END, "INTEGER DFAULT = 0")
+
         )).append("\n");
 
 
@@ -76,6 +79,7 @@ public class DBHelper extends SQLiteOpenHelper {
         sql.append(mkTBL(TBL_PLAYERS,
                 mkCOL(PLAYERS_GAME_ID, "INTEGER NOT NULL"),
                 mkCOL(PLAYERS_PLAYER_ID, "INTEGER NOT NULL"),
+                mkCOL(PLAYERS_TOKEN, "BOOLEAN NOT NULL DEFAULT = 0"),
                 mkFK(PLAYERS_GAME_ID, TBL_GAME, GAME_ID),
                 mkFK(PLAYERS_PLAYER_ID, TBL_PLAYER, PLAYER_ID)
         )).append("\n");
@@ -84,7 +88,7 @@ public class DBHelper extends SQLiteOpenHelper {
         sql.append(mkTBL(TBL_LANES,
                 mkCOL(LANES_GAME_ID, "INTEGER NOT NULL"),
                 mkCOL(LANES_POSITION, "INTEGER NOT NULL"),
-                mkCOL(LANES_TILES, "BLOB NOT NULL"),
+                mkCOL(LANES_TILES, "BLOB"),
                 mkFK(LANES_GAME_ID, TBL_GAME, GAME_ID),
                 mkPK(LANES_GAME_ID + ", " + LANES_POSITION)
         ));

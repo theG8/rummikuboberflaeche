@@ -1,6 +1,6 @@
 package de.g8keeper.rummikuboberflaeche;
 
-public class TestUtilitys {
+public class TestUtilities {
 
 
 

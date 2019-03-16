@@ -4,95 +4,94 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class Player implements Serializable {
-    
+
     private static int count = 0;
 
-    private long id;
-    private String name;
-    private TileSet tileSet;
-    
-    
-    
-    public Player(String name) {
-	this.name = name;
-	this.tileSet = new TileSet();
-    }
-    
-    public Player(String name, TileSet tileSet) {
-	this(name);
-	this.tileSet = tileSet;
+    private long mId;
+    private String mName;
+    private TileSet mTileSet;
+
+
+    public Player(long id, String name) {
+	    this.mId = id;
+        this.mName = name;
+        this.mTileSet = new TileSet();
     }
 
-	public long getId() {
-		return id;
-	}
+    public Player(long id, String name, TileSet tileSet) {
+        this(id, name);
+        this.mTileSet = tileSet;
+    }
 
-	public void setId(long id) {
-		this.id = id;
-	}
+    public long getId() {
+        return mId;
+    }
+
+//	public void setId(long id) {
+//		this.mId = id;
+//	}
 
     public String getName() {
-        return name;
+        return mName;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+//    public void setName(String name) {
+//        this.mName = name;
+//    }
 
     public TileSet getTileSet() {
-        return tileSet;
+        return mTileSet;
     }
 
     public void setTileSet(TileSet tileSet) {
-        this.tileSet = tileSet;
+        this.mTileSet = tileSet;
     }
 
-    @Override 
+    @Override
     public String toString() {
 
-		return "Player(" + this.id + ", " + this.name + ")";
+        return "Player(" + this.mId + ", " + this.mName + ")";
     }
 
-	public String toStringWithTiles() {
+    public String toStringWithTiles() {
 
-		return "Player(" + this.id + ", " + this.name + ") {" + this.tileSet + "}";
-	}
+        return "Player(" + this.mId + ", " + this.mName + ") {" + this.mTileSet + "}";
+    }
 
-    
+
     @Override
     public int hashCode() {
-	return Objects.hash(this.name,this.tileSet);
+        return Objects.hash(this.mName, this.mTileSet);
     }
 
     @Override
     public boolean equals(Object obj) {
-	if (this == obj) {
-	    return true;
-	}
-	if (obj == null) {
-	    return false;
-	}
-	if (!(obj instanceof Player)) {
-	    return false;
-	}
-	Player other = (Player) obj;
-	if (name == null) {
-	    if (other.name != null) {
-		return false;
-	    }
-	} else if (!name.equals(other.name)) {
-	    return false;
-	}
-	if (tileSet == null) {
-	    if (other.tileSet != null) {
-		return false;
-	    }
-	} else if (!tileSet.equals(other.tileSet)) {
-	    return false;
-	}
-	return true;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof Player)) {
+            return false;
+        }
+        Player other = (Player) obj;
+        if (mName == null) {
+            if (other.mName != null) {
+                return false;
+            }
+        } else if (!mName.equals(other.mName)) {
+            return false;
+        }
+        if (mTileSet == null) {
+            if (other.mTileSet != null) {
+                return false;
+            }
+        } else if (!mTileSet.equals(other.mTileSet)) {
+            return false;
+        }
+        return true;
     }
-
 
 
 }

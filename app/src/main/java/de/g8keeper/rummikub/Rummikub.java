@@ -24,7 +24,7 @@ public class Rummikub {
         System.out.println(game.pool);
 
 
-        player = new Player("Horst");
+        player = new Player(1,"Horst");
 
         for (int i = 0; i < 14; i++) {
             player.getTileSet().addTile(game.pool.getTile());

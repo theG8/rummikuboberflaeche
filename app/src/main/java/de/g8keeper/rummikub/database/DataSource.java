@@ -6,10 +6,15 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.g8keeper.rummikub.Game;
+import de.g8keeper.rummikub.Lane;
 import de.g8keeper.rummikub.Player;
+import de.g8keeper.rummikub.TileSet;
 
 public class DataSource {
 
@@ -32,13 +37,20 @@ public class DataSource {
 
     private String[] columnsGamePlayers = {
             DBHelper.PLAYERS_GAME_ID,
-            DBHelper.PLAYERS_PLAYER_ID
+            DBHelper.PLAYERS_PLAYER_ID,
+            DBHelper.PLAYERS_TOKEN
     };
 
     private String[] columsLanes = {
             DBHelper.LANES_GAME_ID,
             DBHelper.LANES_POSITION,
             DBHelper.LANES_TILES
+    };
+
+    private String[] columnsTileSets = {
+            DBHelper.TILESETS_GAME_ID,
+            DBHelper.TILESETS_PLAYER_ID,
+            DBHelper.TILESETS_TILES,
     };
 
 
@@ -74,13 +86,34 @@ public class DataSource {
         int idIndex = cursor.getColumnIndex(DBHelper.PLAYER_ID);
         int idName = cursor.getColumnIndex(DBHelper.PLAYER_NAME);
 
-        long index = cursor.getInt(idIndex);
+        long id = cursor.getLong(idIndex);
         String name = cursor.getString(idName);
 
-        Player player = new Player(name);
-        player.setId(index);
+        Player player = new Player(id, name);
+
         return player;
 
+    }
+
+    public Player createPlayer(String name) {
+
+        ContentValues values = new ContentValues();
+        values.put(DBHelper.PLAYER_NAME, name);
+
+        long insertId = db.insert(DBHelper.TBL_PLAYER, null, values);
+
+        Cursor cursor = db.query(DBHelper.TBL_PLAYER,
+                columnsPlayer,
+                DBHelper.PLAYER_ID + "=" + insertId,
+                null, null, null, null);
+
+        cursor.moveToFirst();
+
+        Player player = cursorToPlayer(cursor);
+
+        cursor.close();
+
+        return player;
     }
 
     public Player updatePlayer(long id, String name) {
@@ -106,27 +139,6 @@ public class DataSource {
         return player;
     }
 
-
-    public Player createPlayer(String name) {
-
-        ContentValues values = new ContentValues();
-        values.put(DBHelper.PLAYER_NAME, name);
-
-        long insertId = db.insert(DBHelper.TBL_PLAYER,null, values);
-
-        Cursor cursor = db.query(DBHelper.TBL_PLAYER,
-                columnsPlayer,
-                DBHelper.PLAYER_ID + "=" + insertId,
-                null,null,null,null);
-
-        cursor.moveToFirst();
-
-        Player player = cursorToPlayer(cursor);
-
-        cursor.close();
-
-        return player;
-    }
 
     public void deletePlayer(Player player) {
 
@@ -163,74 +175,225 @@ public class DataSource {
 
 
 
-//    public ShoppingMemo updateShoppingMemo(long id, String newProduct, int newQuantity, boolean newChecked) {
+
+    /*
+     **************************************************************************************
+     */
+
+
+    private Game cursorToGame(Cursor cursor) {
+        int idIndex = cursor.getColumnIndex(DBHelper.GAME_ID);
+        int idTitle = cursor.getColumnIndex(DBHelper.GAME_TITLE);
+        int idStart = cursor.getColumnIndex(DBHelper.GAME_START);
+        int idEnd = cursor.getColumnIndex(DBHelper.GAME_END);
+
+
+        long index = cursor.getLong(idIndex);
+        String title = cursor.getString(idTitle);
+        long start = cursor.getLong(idStart);
+        long end = cursor.getLong(idStart);
+
+
+        Game game = new Game(index, title);
+
+        return game;
+
+    }
+
+    public Game createGame(String title, long start, long end) {
+
+        ContentValues values = new ContentValues();
+        values.put(DBHelper.GAME_TITLE, title);
+        values.put(DBHelper.GAME_START, start);
+        values.put(DBHelper.GAME_END, end);
+
+        long gameId = db.insert(DBHelper.TBL_GAME, null, values);
+
+        Cursor cursor = db.query(DBHelper.TBL_PLAYER,
+                columnsGame,
+                DBHelper.GAME_ID + "=" + gameId,
+                null, null, null, null);
+
+        cursor.moveToFirst();
+
+        Game game = cursorToGame(cursor);
+
+        cursor.close();
+
+        return game;
+    }
+
+
+
+
+    public void addTileSetToPlayer(Game game, Player player){
+
+        ContentValues values;
+
+        values = new ContentValues();
+        values.put(DBHelper.TILESETS_GAME_ID, game.getId());
+        values.put(DBHelper.TILESETS_PLAYER_ID, player.getId());
+        values.put(DBHelper.TILESETS_TILES, player.getTileSet().toBytearray());
+
+        db.insert(DBHelper.TBL_TILESETS, null, values);
+    }
+
+
+    public void updateTileSet(Game game, Player player) {
+
+        ContentValues values = new ContentValues();
+
+        values.put(DBHelper.TILESETS_TILES, player.getTileSet().toBytearray());
+
+        db.update(DBHelper.TBL_TILESETS, values,
+                DBHelper.TILESETS_GAME_ID + "=" + game.getId(), null);
+
+    }
+
+
+    public void addLaneToGame(Game game, int position) {
+
+        ContentValues values;
+
+        values = new ContentValues();
+        values.put(DBHelper.LANES_GAME_ID, game.getId());
+        values.put(DBHelper.LANES_POSITION, position);
+
+
+        db.insert(DBHelper.TBL_LANES, null, values);
+    }
+
+
+    public void updateLane(Game game, int position, Lane lane) {
+
+        ContentValues values = new ContentValues();
+
+        values.put(DBHelper.LANES_POSITION, position);
+        values.put(DBHelper.LANES_TILES, lane.toBytearray());
+
+
+        db.update(DBHelper.TBL_LANES, values,
+                DBHelper.LANES_GAME_ID + "=" + game.getId(), null);
+
+    }
+
+
+    public void removeLaneFromGame(Game game, int position) {
+        db.delete(DBHelper.TBL_LANES,
+                DBHelper.LANES_GAME_ID + " = " + game.getId() + " AND " +
+                        DBHelper.LANES_POSITION + " = " + position,
+                null
+        );
+    }
+
+    public void addPlayerToGame(Game game, Player player) {
+        ContentValues values;
+
+        values = new ContentValues();
+        values.put(DBHelper.PLAYERS_GAME_ID, game.getId());
+        values.put(DBHelper.PLAYERS_PLAYER_ID, player.getId());
+
+        db.insert(DBHelper.TBL_PLAYERS, null, values);
+    }
+
+
+    public void removePlayerFromGame(Game game, Player player) {
+
+        db.delete(DBHelper.TBL_PLAYERS,
+                DBHelper.PLAYERS_GAME_ID + " = " + game.getId() + " AND " +
+                        DBHelper.PLAYERS_PLAYER_ID + " = " + player.getId(),
+                null
+        );
+
+    }
+
+
+//    public Player createGame(String title, long start, long end) {
 //
-//        int iNewChecked = newChecked ? 1 : 0;
+//        ContentValues values = new ContentValues();
+//        values.put(DBHelper.GAME_TITLE, title);
+//        values.put(DBHelper.GAME_START, start);
+//        values.put(DBHelper.GAME_END, end);
+//
+//        long insertId = db.insert(DBHelper.TBL_GAME,null, values);
+//
+//        Cursor cursor = db.query(DBHelper.TBL_PLAYER,
+//                columnsGame,
+//                DBHelper.PLAYER_ID + "=" + insertId,
+//                null,null,null,null);
+//
+//        cursor.moveToFirst();
+//
+//        Player player = cursorToPlayer(cursor);
+//
+//        cursor.close();
+//
+//        return player;
+//    }
+//
+//
+//    public Player updatePlayer(long id, String name) {
+//
 //        ContentValues values = new ContentValues();
 //
-//        values.put(DBHelper.COL_PRODUCT, newProduct);
-//        values.put(DBHelper.COL_QUANTITY, newQuantity);
-//        values.put(DBHelper.COL_CHECKED, iNewChecked);
-//
-//        dbHelper.update(DBHelper.TBL_PLAYERS, values,
-//                DBHelper.PLAYERS_ID + "=" + id, null);
+//        values.put(DBHelper.PLAYER_NAME, name);
 //
 //
-//        Cursor cursor = dbHelper.query(DBHelper.TBL_PLAYERS, columns,
-//                DBHelper.PLAYERS_ID + "=" + id,
+//        db.update(DBHelper.TBL_PLAYER, values,
+//                DBHelper.PLAYER_ID + "=" + id, null);
+//
+//
+//        Cursor cursor = db.query(DBHelper.TBL_PLAYER,
+//                columnsPlayer,
+//                DBHelper.PLAYER_ID + "=" + id,
 //                null, null, null, null);
 //
 //        cursor.moveToFirst();
-//        ShoppingMemo sm = cursorToShoppingMemo(cursor);
+//        Player player = cursorToPlayer(cursor);
 //        cursor.close();
 //
-//        return sm;
+//        return player;
 //    }
 //
 //
 //
 //
-//    private ShoppingMemo cursorToShoppingMemo(Cursor cursor) {
-//        int idIndex = cursor.getColumnIndex(DBHelper.PLAYERS_ID);
-//        int idProduct = cursor.getColumnIndex(DBHelper.COL_PRODUCT);
-//        int idQuantity = cursor.getColumnIndex(DBHelper.COL_QUANTITY);
-//        int idChecked = cursor.getColumnIndex(DBHelper.COL_CHECKED);
+//    public void deletePlayer(Player player) {
 //
-//        long index = cursor.getInt(idIndex);
-//        String product = cursor.getString(idProduct);
-//        int quantity = cursor.getInt(idQuantity);
-//        boolean checked = (cursor.getInt(idChecked) != 0);
+//        long id = player.getId();
 //
-//        ShoppingMemo shoppingMemo = new ShoppingMemo(product, quantity, index, checked);
+//        db.delete(DBHelper.TBL_PLAYER, DBHelper.PLAYER_ID + "=" + id, null);
 //
-//        return shoppingMemo;
+//        Log.d(TAG, "Player gelöscht! ID: " + id + " Inhalt: " + player.toString());
 //
 //    }
 //
+//    public List<Player> getAllPlayers() {
 //
-//    public List<ShoppingMemo> getAllShoppingMemos() {
+//        List<Player> list = new ArrayList<>();
 //
-//        List<ShoppingMemo> shoppingMemoList = new ArrayList<>();
-//        Cursor cursor = dbHelper.query(DBHelper.TBL_PLAYERS, columns,
+//        Cursor cursor = db.query(DBHelper.TBL_PLAYER, columnsPlayer,
 //                null, null, null, null, null);
 //
 //        cursor.moveToFirst();
 //
-//        ShoppingMemo shoppingMemo;
+//        Player player;
 //
 //        while (!cursor.isAfterLast()) {
-//            shoppingMemo = cursorToShoppingMemo(cursor);
-//            shoppingMemoList.add(shoppingMemo);
-//            Log.d(TAG, "ID: " + shoppingMemo.getId() +
-//                    " Inhalt: " + shoppingMemo.toString());
+//            player = cursorToPlayer(cursor);
+//            list.add(player);
 //            cursor.moveToNext();
 //        }
 //
 //        cursor.close();
 //
-//        return shoppingMemoList;
+//        return list;
 //
 //    }
+
+    /*
+     **************************************************************************************
+     */
 
 
 }

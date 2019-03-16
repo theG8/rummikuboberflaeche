@@ -2,6 +2,7 @@ package de.g8keeper.rummikub;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.Random;
 
 public class Tile implements Comparable<Tile>, IEvaluable, Serializable {
 
@@ -42,6 +43,22 @@ public class Tile implements Comparable<Tile>, IEvaluable, Serializable {
         // to the mValue this mIsJoker-tile represents
         setColor(Color.RED);
         setValue(MIN_VALUE);
+    }
+
+    // generates a random Tile
+    public Tile(){
+
+        if((int) (Math.random() * 53) == 1){
+            this.mIsJoker = true;
+            setColor(Color.RED);
+            setValue(MIN_VALUE);
+        } else {
+            this.mIsJoker = true;
+            setColor(Color.values()[(int) (Math.random() * 4)]);
+            setValue(((int) (Math.random() * MAX_VALUE - MIN_VALUE)) + MIN_VALUE + 1);
+            this.mIsJoker = false;
+        }
+
     }
 
     public Tile(byte b) {
