@@ -15,6 +15,7 @@ import android.widget.Space;
 import java.util.Random;
 
 import de.g8keeper.rummikub.Color;
+import de.g8keeper.rummikub.Game;
 import de.g8keeper.rummikub.Lane;
 import de.g8keeper.rummikub.Tile;
 import de.g8keeper.rummikub.TilePool;
@@ -28,7 +29,7 @@ public class PlaygroundActivity extends AppCompatActivity {
     public static View draggedViewParent = null;
     public static int draggedTileIndex = -1;
 
-
+    private Game mGame;
 
     private FragmentTileSet fragTileSet;
 
@@ -50,7 +51,11 @@ public class PlaygroundActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playground);
 
-        long gameID = getIntent().getLongExtra("game",-1L);
+//        long gameID = getIntent().getLongExtra("game",-1L);
+
+        mGame = getIntent().getParcelableExtra("game");
+
+
 
         svVertical = findViewById(R.id.sv_vertical);
         svHorizontal = findViewById(R.id.sv_horizontal);
@@ -62,7 +67,13 @@ public class PlaygroundActivity extends AppCompatActivity {
         llPlayground.setOnDragListener(new ScrollOnDragListener());
 
 
-        Log.d(TAG, "onCreate: gameID: " + gameID);
+        if(mGame != null){
+            Log.d(TAG, "onCreate: Parcelable kam an!\n" + mGame.toString(true));
+        } else {
+            Log.d(TAG, "onCreate: Parcelable kam NICHT an!");
+        }
+
+
 
 //        testCode();
     }

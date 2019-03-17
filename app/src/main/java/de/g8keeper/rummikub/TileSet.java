@@ -1,5 +1,8 @@
 package de.g8keeper.rummikub;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,11 +11,51 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-public class TileSet implements IEvaluable, Iterable<Tile>, Serializable {
+public class TileSet implements IEvaluable, Iterable<Tile>, Parcelable {
 
+    public static final Parcelable.Creator<TileSet> CREATOR =
+            new Parcelable.Creator<TileSet>() {
 
+                @Override
+                public TileSet createFromParcel(Parcel source) {
+                    return new TileSet(source);
+                }
+
+                @Override
+                public TileSet[] newArray(int size) {
+                    return new TileSet[size];
+                }
+            };
     protected List<Tile> mTiles;
 
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        byte[] bytearray = toBytearray();
+
+        dest.writeInt(bytearray.length);
+        dest.writeByteArray(bytearray);
+    }
+
+    public TileSet(Parcel parcel){
+        List<Tile> tmp = new ArrayList<>();
+
+        byte[] bytearray = new byte[parcel.readInt()];
+        parcel.readByteArray(bytearray);
+
+        if(bytearray.length > 0){
+            for(byte b:bytearray){
+                tmp.add(new Tile(b));
+            }
+        }
+
+        mTiles = tmp;
+    }
 
     public TileSet() {
         // initialize this with new ArrayList<Tile>
@@ -124,6 +167,8 @@ public class TileSet implements IEvaluable, Iterable<Tile>, Serializable {
 
         return new TileItr(mTiles);
     }
+
+
 
     class TileItr implements Iterator<Tile> {
 

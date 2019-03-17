@@ -10,7 +10,9 @@
     <color name="main_background_transparent">#6CFFD8AB</color>
 
 
-
+    <color name="fab_green">#BA00FF00</color>
+    <color name="fab_blue">#CD4242F0</color>
+    <color name="fab_red">@color/colorMainText</color>
 
     <!-- test-colors -->
     <color name="test_background">#88FF0000</color>

@@ -51,26 +51,34 @@ public class GamesActivity extends AppCompatActivity {
 
 
         mLvGames = findViewById(R.id.lv_games);
-        View vHeader = getLayoutInflater().inflate(R.layout.listview_games_header, null);
+//        View vHeader = getLayoutInflater().inflate(R.layout.listview_games_header, null);
 
         mAdapter = new GamesAdapter(this, R.layout.listview_games_listitem, games);
 
-        mLvGames.addHeaderView(vHeader);
+//        mLvGames.addHeaderView(vHeader);
         mLvGames.setAdapter(mAdapter);
         mLvGames.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d(TAG, "onItemClick: " + position + " id: " + id);
-                Game game = mAdapter.getItem(position - 1);
+                Game game = mAdapter.getItem((int) id);
 
                 if (game.hasPlayers()) {
 
                     Intent intent = new Intent(getBaseContext(), PlaygroundActivity.class);
-                    intent.putExtra("game", game.getId());
+
+                    intent.putExtra("game", game);
+
                     startActivity(intent);
 
                 } else {
 
+
+                    Intent intent = new Intent(getBaseContext(), PlayersActivity.class);
+
+                    intent.putExtra("game", game);
+
+                    startActivity(intent);
 
 
                 }
@@ -221,6 +229,9 @@ public class GamesActivity extends AppCompatActivity {
                     selCount--;
                 }
 
+                mAdapter.setItemChecked((int) id, checked);
+                mAdapter.notifyDataSetChanged();
+
 
                 String cabTitel = selCount + " " + getString(R.string.cab_checked_string);
                 mode.setTitle(cabTitel);
@@ -230,6 +241,7 @@ public class GamesActivity extends AppCompatActivity {
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 getMenuInflater().inflate(R.menu.menu_games_contextual_action_bar, menu);
+                mAdapter.setCheckable(true);
                 return true;
             }
 
@@ -305,7 +317,7 @@ public class GamesActivity extends AppCompatActivity {
             @Override
             public void onDestroyActionMode(ActionMode mode) {
                 selCount = 0;
-
+                mAdapter.setCheckable(false);
             }
         });
 

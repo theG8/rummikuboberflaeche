@@ -1,6 +1,9 @@
 
 package de.g8keeper.rummikub;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -12,10 +15,31 @@ public class Lane extends TileSet {
     private static final boolean DEBUG = false;
     public static int MIN_TILES_TO_VERIFY; // minimum amount of mTiles in a lane to verify
 
+    public static final Parcelable.Creator<Lane> CREATOR =
+            new Parcelable.Creator<Lane>() {
+
+                @Override
+                public Lane createFromParcel(Parcel source) {
+                    return new Lane(source);
+                }
+
+                @Override
+                public Lane[] newArray(int size) {
+                    return new Lane[size];
+                }
+            };
+
+
+
     static {
         MIN_TILES_TO_VERIFY = 3; // in rummikub, a lane must contain a minimum of
         // three mTiles, to verify
 
+    }
+
+
+    public Lane(Parcel parcel){
+        super(parcel);
     }
 
     // initializes the ListOfTiles

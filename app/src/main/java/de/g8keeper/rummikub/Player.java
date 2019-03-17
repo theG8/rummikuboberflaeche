@@ -1,15 +1,36 @@
 package de.g8keeper.rummikub;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.Serializable;
 import java.util.Objects;
 
-public class Player implements Serializable {
+public class Player implements Serializable, Parcelable {
+
+
+    public static final Parcelable.Creator<Player> CREATOR =
+            new Parcelable.Creator<Player>(){
+
+                @Override
+                public Player createFromParcel(Parcel source) {
+                    return new Player(source);
+                }
+
+                @Override
+                public Player[] newArray(int size) {
+                    return new Player[size];
+                }
+            };
 
     private static int count = 0;
 
     private long mId;
     private String mName;
     private TileSet mTileSet;
+
+
+
 
 
     public Player(long id, String name) {
@@ -47,6 +68,11 @@ public class Player implements Serializable {
     public TileSet getTileSet() {
         return mTileSet;
     }
+
+
+
+
+
 
     public void setTileSet(TileSet tileSet) {
         this.mTileSet = tileSet;
@@ -98,5 +124,25 @@ public class Player implements Serializable {
         return true;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(this.mId);
+        dest.writeString(mName);
+        byte[] bytearray = mTileSet.toBytearray();
+        dest.writeInt(bytearray.length);
+        dest.writeByteArray(mTileSet.toBytearray());
+    }
+
+    public Player(Parcel parcel){
+        this.mId = parcel.readLong();
+        this.mName = parcel.readString();
+        byte[] tileSet = new byte[parcel.readInt()];
+        parcel.readByteArray(tileSet);
+        this.mTileSet = new TileSet(tileSet);
+    }
 }

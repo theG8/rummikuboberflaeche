@@ -13,6 +13,20 @@
     tools:context=".GamesActivity">
 
 
+    <TextView
+        android:id="@+id/tv_games_headline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/games"
+        android:textAppearance="@style/MyMenuTextAppearance"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar_main"
@@ -28,10 +42,10 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/fab_games_add"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_games_headline" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_games_add"
@@ -42,7 +56,7 @@
         android:layout_marginBottom="16dp"
         android:clickable="true"
         android:onClick="onButtonClick"
-        app:backgroundTint="@color/colorMainText"
+        app:backgroundTint="@color/fab_blue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

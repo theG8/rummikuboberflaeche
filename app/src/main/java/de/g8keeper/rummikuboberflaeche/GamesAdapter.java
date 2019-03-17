@@ -2,13 +2,14 @@ package de.g8keeper.rummikuboberflaeche;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -23,18 +24,35 @@ public class GamesAdapter extends ArrayAdapter<Game> {
 
     private int resourceView;
     private Context context;
-    private List<Game> games;
+    private List<Game> mGames;
+    private boolean[] mCheckedStates;
+    private boolean mCheckable;
 
+    @Override
+    public void notifyDataSetChanged() {
+        if (mCheckedStates.length != mGames.size()){
+            mCheckedStates = new boolean[mGames.size()];
+        }
 
+        super.notifyDataSetChanged();
+    }
 
-
+    public void setCheckable(boolean flag){
+        mCheckable = flag;
+    }
+    public void setItemChecked(int itemID, boolean checked){
+        mCheckedStates[itemID] = checked;
+    }
 
     public GamesAdapter(@NonNull Context context, int resource, @NonNull List<Game> objects) {
         super(context, resource, objects);
 
         this.resourceView = resource;
         this.context  = context;
-        this.games = objects;
+        this.mGames = objects;
+
+        mCheckedStates = new boolean[mGames.size()];
+
     }
 
     @NonNull
@@ -48,8 +66,22 @@ public class GamesAdapter extends ArrayAdapter<Game> {
         TextView tvStatus = convertView.findViewById(R.id.li_games_tv_status);
         TextView tvTitle = convertView.findViewById(R.id.li_games_tv_title);
         TextView tvId = convertView.findViewById(R.id.li_games_tv_id);
+        ImageView ivCheck = convertView.findViewById(R.id.li_games_iv_check);
 
-        Game game = games.get(position);
+        if(mCheckable) {
+
+            ivCheck.setVisibility(View.VISIBLE);
+            if (mCheckedStates[position]) {
+                ivCheck.setImageDrawable(getContext().getDrawable(android.R.drawable.checkbox_on_background));
+                //
+            } else {
+                ivCheck.setImageDrawable(getContext().getDrawable(android.R.drawable.checkbox_off_background));
+            }
+        } else {
+            ivCheck.setVisibility(View.INVISIBLE);
+        }
+
+        Game game = mGames.get(position);
 
         tvTitle.setText(game.getTitle());
         tvId.setText("ID: " + game.getId() + " players: " + game.getPlayers());
@@ -58,30 +90,6 @@ public class GamesAdapter extends ArrayAdapter<Game> {
 
         tvStatus.setText(state[game.state()]);
 
-//        convertView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Log.d(TAG, "onClick: " + game.getTitle() + " " + game.getPlayers());
-//
-//                if(game.hasPlayers()){
-//
-//                    Intent intent = new Intent(getContext(), PlaygroundActivity.class);
-//                    intent.putExtra("game", game.getId());
-//                    getContext().startActivity(intent);
-//
-//                } else {
-//
-//
-//
-//
-//                }
-//
-//
-//
-//
-//
-//            }
-//        });
 
         return convertView;
     }

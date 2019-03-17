@@ -12,20 +12,6 @@
 
     tools:context=".PlayersActivity">
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_add"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginBottom="16dp"
-        android:clickable="true"
-        android:onClick="onButtonClick"
-        app:backgroundTint="@color/colorMainText"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/lv_players"
-        app:layout_constraintStart_toStartOf="@+id/lv_players"
-        app:srcCompat="@android:drawable/ic_input_add" />
-
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar_main"
@@ -40,11 +26,58 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/fab_players_add"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_players_headline" />
+
+    <TextView
+        android:id="@+id/tv_players_headline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/players"
+        android:textAppearance="@style/MyMenuTextAppearance"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_players_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:onClick="onButtonClick"
+        app:backgroundTint="@color/fab_blue"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/fab_players_play"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@android:drawable/ic_input_add" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_players_play"
+        android:layout_width="58dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:clickable="true"
+        android:onClick="onButtonClick"
+        app:backgroundTint="@color/fab_green"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/fab_players_add"
+        app:layout_constraintTop_toBottomOf="@+id/lv_players"
+        app:srcCompat="@android:drawable/ic_media_play" /><![CDATA[
+
+
+        app:layout_constraintStart_toEndOf=@+id/tv_players_headline"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+
+]]>
 </android.support.constraint.ConstraintLayout>

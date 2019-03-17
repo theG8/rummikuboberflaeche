@@ -1,5 +1,7 @@
 package de.g8keeper.rummikub;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -10,12 +12,26 @@ import java.util.List;
 
 import de.g8keeper.rummikub.database.DataSource;
 
-public class Game {
+public class Game implements Parcelable {
     private static final String TAG = Game.class.getSimpleName();
 
     public static final int STATE_NOT_STARTED = 0;
     public static final int STATE_RUNNING = 1;
     public static final int STATE_ENDED = 2;
+
+    public static final Parcelable.Creator<Game> CREATOR =
+            new Parcelable.Creator<Game>() {
+
+                @Override
+                public Game createFromParcel(Parcel source) {
+                    return new Game(source);
+                }
+
+                @Override
+                public Game[] newArray(int size) {
+                    return new Game[size];
+                }
+            };
 
 
     private long mID;
@@ -30,6 +46,11 @@ public class Game {
     private int mIDActualPlayer;
 
     private DataSource dataSource;
+
+
+
+
+
 
 
     public Game(long id, String title, DataSource dataSource) {
@@ -47,7 +68,26 @@ public class Game {
         this.mEndTime = end;
     }
 
+    public Game(Parcel parcel) {
+        this.mTitle = parcel.readString();
+        this.mStartTime = parcel.readLong();
+        this.mEndTime = parcel.readLong();
 
+        mPlayers = new ArrayList<>();
+        mLanes = new ArrayList<>();
+
+        parcel.readTypedList(mPlayers, Player.CREATOR);
+        parcel.readTypedList(mLanes, Lane.CREATOR);
+
+        this.mIDActualPlayer = parcel.readInt();
+
+        buildPool();
+
+    }
+
+    public void setDataSource(DataSource dataSource){
+        this.dataSource = dataSource;
+    }
 
     public void buildPool() {
 
@@ -124,19 +164,19 @@ public class Game {
 
     }
 
-    public void setPlayers(List<Player> players){
+    public void setPlayers(List<Player> players) {
 
-            mPlayers = players;
-
-    }
-
-    public void setLanes(List<Lane> lanes){
-
-            mLanes = lanes;
+        mPlayers = players;
 
     }
 
-    public void setActualPlayer(int id){
+    public void setLanes(List<Lane> lanes) {
+
+        mLanes = lanes;
+
+    }
+
+    public void setActualPlayer(int id) {
         mIDActualPlayer = id;
     }
 
@@ -156,7 +196,7 @@ public class Game {
 
     }
 
-    public boolean hasPlayers(){
+    public boolean hasPlayers() {
         return mPlayers.size() != 0;
     }
 
@@ -204,6 +244,25 @@ public class Game {
         return "game(" + this.mID + ", " + this.mTitle + ", " +
                 this.mStartTime + ", " + this.mEndTime + ", state: " + this.state() + ", " +
                 "players: " + this.mPlayers + "\nLanes: " + this.mLanes + ")";
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mTitle);
+        dest.writeLong(mStartTime);
+        dest.writeLong(mEndTime);
+
+        dest.writeTypedList(mPlayers);
+        dest.writeTypedList(mLanes);
+
+        dest.writeInt(mIDActualPlayer);
+
+
     }
 
 

@@ -2,7 +2,6 @@ package de.g8keeper.rummikuboberflaeche;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -13,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.g8keeper.rummikub.Player;
@@ -21,15 +21,12 @@ public class PlayerAdapter extends ArrayAdapter<Player> {
 
     private static final String TAG = PlayerAdapter.class.getSimpleName();
 
-    public static final int MODE_NORMAL = 0;
-    public static final int MODE_CHOOSABLE = 1;
 
-
-    private int mMode;
     private int mResourceView;
     private Context mContext;
     private List<Player> mPlayers;
     private boolean[] mCheckedStates;
+    private boolean mCheckable;
 
 
     @Override
@@ -43,8 +40,12 @@ public class PlayerAdapter extends ArrayAdapter<Player> {
 
     }
 
+    public void setCheckable(boolean flag){
+        mCheckable = flag;
+    }
     public void setItemChecked(int itemID, boolean checked){
         mCheckedStates[itemID] = checked;
+        notifyDataSetChanged();
     }
 
     public PlayerAdapter(@NonNull Context context, int resource, @NonNull List<Player> objects) {
@@ -73,13 +74,18 @@ public class PlayerAdapter extends ArrayAdapter<Player> {
         ImageView ivCheck = convertView.findViewById(R.id.li_players_iv_check);
 
 
-        if(mCheckedStates[position]){
-            ivCheck.setImageDrawable(getContext().getDrawable(android.R.drawable.checkbox_on_background));
-//
-        } else {
-            ivCheck.setImageDrawable(getContext().getDrawable(android.R.drawable.checkbox_off_background));
-        }
+        if(mCheckable) {
 
+            ivCheck.setVisibility(View.VISIBLE);
+            if (mCheckedStates[position]) {
+                ivCheck.setImageDrawable(getContext().getDrawable(android.R.drawable.checkbox_on_background));
+                //
+            } else {
+                ivCheck.setImageDrawable(getContext().getDrawable(android.R.drawable.checkbox_off_background));
+            }
+        } else {
+            ivCheck.setVisibility(View.INVISIBLE);
+        }
 
         Log.d(TAG, "getView: tvName: " + tvName.getText());
 
@@ -90,5 +96,15 @@ public class PlayerAdapter extends ArrayAdapter<Player> {
     }
 
 
+    public List<Player> getSelectedPlayers() {
+        List<Player> players = new ArrayList<>();
 
+        for(int i = 0; i < mCheckedStates.length; i++){
+            if (mCheckedStates[i]){
+                players.add(mPlayers.get(i));
+            }
+        }
+
+        return players;
+    }
 }
