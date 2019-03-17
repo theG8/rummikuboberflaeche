@@ -47,30 +47,9 @@ public class Game {
         this.mEndTime = end;
     }
 
-    public Game(Game game) {
-        this.mID = game.mID;
-        this.mTitle = new String(game.mTitle);
-        this.mStartTime = game.mEndTime;
-        this.mEndTime = game.mEndTime;
-
-        this.mPlayers = new ArrayList<>();
-        for (Player p : game.mPlayers) {
-            this.mPlayers.add(p);
-        }
-
-        this.mLanes = new ArrayList<>();
-        for (Lane l : game.mLanes) {
-            this.mLanes.add(l);
-        }
-
-        this.mPool = new TilePool(game.mPool);
-        this.mIDActualPlayer = game.mIDActualPlayer;
-
-        this.dataSource = game.dataSource;
-    }
 
 
-    private void buildPool() {
+    public void buildPool() {
 
         mPool = new TilePool();
 
@@ -145,6 +124,21 @@ public class Game {
 
     }
 
+    public void setPlayers(List<Player> players){
+
+            mPlayers = players;
+
+    }
+
+    public void setLanes(List<Lane> lanes){
+
+            mLanes = lanes;
+
+    }
+
+    public void setActualPlayer(int id){
+        mIDActualPlayer = id;
+    }
 
     public void loadGameData() {
         mPlayers = dataSource.getGamePlayers(this);

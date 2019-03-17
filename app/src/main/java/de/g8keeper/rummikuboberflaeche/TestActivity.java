@@ -57,7 +57,7 @@ public class TestActivity extends AppCompatActivity {
             case R.id.tGetGame:
 
                 game = dataSource.getGame(1);
-                game.loadGameData();
+//                game.loadGameData();
 
                 Log.d(TAG, "got game: " + game.toString());
 

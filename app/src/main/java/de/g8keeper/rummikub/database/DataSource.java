@@ -230,6 +230,12 @@ public class DataSource {
 
         Game game = cursorToGame(cursor);
 
+        game.setPlayers(getGamePlayers(game));
+        game.setActualPlayer(getGameActualPlayer(game));
+
+        game.setLanes(getGameLanes(game));
+
+        game.buildPool();
 
 
         cursor.close();
