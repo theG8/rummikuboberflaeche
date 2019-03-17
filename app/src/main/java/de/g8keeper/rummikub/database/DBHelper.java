@@ -13,7 +13,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DB_NAME = "rummikub_db";
 
-    public static final int DB_VERSION = 1;
+    public static final int DB_VERSION = 3;
 
 
     public static final String TBL_PLAYER = "tblPlayer";
@@ -36,12 +36,14 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
     public static final String TBL_LANES = "tblLanes";
+
     public static final String LANES_GAME_ID = "id_game";
     public static final String LANES_POSITION = "pos";
     public static final String LANES_TILES = "tiles";
 
 
     public static final String TBL_TILESETS = "tblTileSets";
+
     public static final String TILESETS_GAME_ID = "id_game";
     public static final String TILESETS_PLAYER_ID = "id_player";
     public static final String TILESETS_TILES = "tiles";
@@ -55,61 +57,70 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        StringBuilder sql = new StringBuilder();
+
 
 
         // tblPlayer:
-        sql.append(mkTBL(TBL_PLAYER,
+        String tblPlayer = mkTBL(TBL_PLAYER,
                 mkCOL(PLAYER_ID, "INTEGER PRIMARY KEY AUTOINCREMENT"),
                 mkCOL(PLAYER_NAME, "TEXT NOT NULL")
-        )).append("\n");
+        );
 
 
         // tblGame:
-        sql.append(mkTBL(TBL_GAME,
+        String tblGame = mkTBL(TBL_GAME,
                 mkCOL(GAME_ID, "INTEGER PRIMARY KEY AUTOINCREMENT"),
                 mkCOL(GAME_TITLE, "TEXT NOT NULL"),
-                mkCOL(GAME_START, "INTEGER DEFAULT = 0"),
-                mkCOL(GAME_END, "INTEGER DFAULT = 0")
-
-        )).append("\n");
-
+                mkCOL(GAME_START, "INTEGER DEFAULT 0"),
+                mkCOL(GAME_END, "INTEGER DEFAULT 0")
+        );
 
         // tblGamePlayers:
-        sql.append(mkTBL(TBL_PLAYERS,
+        String tblPlayers = mkTBL(TBL_PLAYERS,
                 mkCOL(PLAYERS_GAME_ID, "INTEGER NOT NULL"),
                 mkCOL(PLAYERS_PLAYER_ID, "INTEGER NOT NULL"),
-                mkCOL(PLAYERS_TOKEN, "BOOLEAN NOT NULL DEFAULT = 0"),
+                mkCOL(PLAYERS_TOKEN, "BOOLEAN NOT NULL DEFAULT 0"),
                 mkFK(PLAYERS_GAME_ID, TBL_GAME, GAME_ID),
                 mkFK(PLAYERS_PLAYER_ID, TBL_PLAYER, PLAYER_ID)
-        )).append("\n");
+        );
 
         // tblLanes:
-        sql.append(mkTBL(TBL_LANES,
+        String tblLanes = mkTBL(TBL_LANES,
+
                 mkCOL(LANES_GAME_ID, "INTEGER NOT NULL"),
                 mkCOL(LANES_POSITION, "INTEGER NOT NULL"),
                 mkCOL(LANES_TILES, "BLOB"),
                 mkFK(LANES_GAME_ID, TBL_GAME, GAME_ID),
                 mkPK(LANES_GAME_ID + ", " + LANES_POSITION)
-        ));
+        );
 
         // tblTileSets
-        sql.append(mkTBL(TBL_TILESETS,
+        String tblTileSets = mkTBL(TBL_TILESETS,
+
                 mkCOL(TILESETS_GAME_ID, "INTEGER NOT NULL"),
                 mkCOL(TILESETS_PLAYER_ID, "INTEGER NOT NULL"),
                 mkCOL(TILESETS_TILES, "BLOB"),
                 mkFK(TILESETS_GAME_ID, TBL_GAME, GAME_ID),
                 mkFK(TILESETS_PLAYER_ID, TBL_PLAYER, PLAYER_ID),
                 mkPK(TILESETS_GAME_ID + ", " + TILESETS_PLAYER_ID)
-                ));
+        );
 
 
-        Log.d(TAG, "onCreate exec -> ");
-        Log.d(TAG, sql.toString());
+
 
         try {
 
-            db.execSQL(sql.toString());
+            Log.d(TAG, "onCreate: " + tblPlayer);
+            db.execSQL(tblPlayer);
+            Log.d(TAG, "onCreate: " + tblGame);
+            db.execSQL(tblGame);
+            Log.d(TAG, "onCreate: " + tblPlayers);
+            db.execSQL(tblPlayers);
+            Log.d(TAG, "onCreate: " + tblTileSets);
+            db.execSQL(tblTileSets);
+            Log.d(TAG, "onCreate: " + tblLanes);
+            db.execSQL(tblLanes);
+
 
         } catch (RuntimeException e) {
             Log.e(TAG, "Fehler beim Anlegen der Datenbank: ", e);
@@ -122,19 +133,28 @@ public class DBHelper extends SQLiteOpenHelper {
         StringBuilder sql = new StringBuilder();
 
 
-        sql.append(dpTBL(TBL_LANES));
-        sql.append(dpTBL(TBL_TILESETS));
-        sql.append(dpTBL(TBL_PLAYERS));
-        sql.append(dpTBL(TBL_GAME));
-        sql.append(dpTBL(TBL_PLAYER));
+        String tblLanes = dpTBL(TBL_LANES);
+        String tblTileSets = dpTBL(TBL_TILESETS);
+        String tblPlayers = dpTBL(TBL_PLAYERS);
+        String tblGame = dpTBL(TBL_GAME);
+        String tblPlayer = dpTBL(TBL_PLAYER);
 
-
-        Log.d(TAG, "onUpdate exec -> ");
-        Log.d(TAG, sql.toString());
 
         try {
 
-            db.execSQL(sql.toString());
+            Log.d(TAG, "onUpgrade: " + tblLanes);
+            db.execSQL(tblLanes);
+            Log.d(TAG, "onUpgrade: " + tblTileSets);
+            db.execSQL(tblTileSets);
+            Log.d(TAG, "onUpgrade: " + tblPlayers);
+            db.execSQL(tblPlayers);
+            Log.d(TAG, "onUpgrade: " + tblGame);
+            db.execSQL(tblGame);
+            Log.d(TAG, "onUpgrade: " + tblPlayer);
+            db.execSQL(tblPlayer);
+
+
+
             onCreate(db);
 
             Log.d(TAG, "Update Erfolgreich");

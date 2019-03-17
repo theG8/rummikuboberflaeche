@@ -42,12 +42,14 @@ public class DataSource {
     };
 
     private String[] columsLanes = {
+
             DBHelper.LANES_GAME_ID,
             DBHelper.LANES_POSITION,
             DBHelper.LANES_TILES
     };
 
     private String[] columnsTileSets = {
+
             DBHelper.TILESETS_GAME_ID,
             DBHelper.TILESETS_PLAYER_ID,
             DBHelper.TILESETS_TILES,
@@ -102,9 +104,15 @@ public class DataSource {
 
         long insertId = db.insert(DBHelper.TBL_PLAYER, null, values);
 
+        return getPlayer(insertId);
+
+    }
+
+    public Player getPlayer(long id) {
+
         Cursor cursor = db.query(DBHelper.TBL_PLAYER,
                 columnsPlayer,
-                DBHelper.PLAYER_ID + "=" + insertId,
+                DBHelper.PLAYER_ID + "=" + id,
                 null, null, null, null);
 
         cursor.moveToFirst();
@@ -116,27 +124,17 @@ public class DataSource {
         return player;
     }
 
-    public Player updatePlayer(long id, String name) {
+    public void updatePlayer(Player player) {
 
         ContentValues values = new ContentValues();
 
-        values.put(DBHelper.PLAYER_NAME, name);
+        values.put(DBHelper.PLAYER_NAME, player.getName());
 
 
         db.update(DBHelper.TBL_PLAYER, values,
-                DBHelper.PLAYER_ID + "=" + id, null);
+                DBHelper.PLAYER_ID + "=" + player.getId(), null);
 
 
-        Cursor cursor = db.query(DBHelper.TBL_PLAYER,
-                columnsPlayer,
-                DBHelper.PLAYER_ID + "=" + id,
-                null, null, null, null);
-
-        cursor.moveToFirst();
-        Player player = cursorToPlayer(cursor);
-        cursor.close();
-
-        return player;
     }
 
 
@@ -191,10 +189,11 @@ public class DataSource {
         long index = cursor.getLong(idIndex);
         String title = cursor.getString(idTitle);
         long start = cursor.getLong(idStart);
-        long end = cursor.getLong(idStart);
+        long end = cursor.getLong(idEnd);
 
 
-        Game game = new Game(index, title);
+        Game game = new Game(index, title, start, end, this);
+
 
         return game;
 
@@ -209,7 +208,7 @@ public class DataSource {
 
         long gameId = db.insert(DBHelper.TBL_GAME, null, values);
 
-        Cursor cursor = db.query(DBHelper.TBL_PLAYER,
+        Cursor cursor = db.query(DBHelper.TBL_GAME,
                 columnsGame,
                 DBHelper.GAME_ID + "=" + gameId,
                 null, null, null, null);
@@ -222,6 +221,117 @@ public class DataSource {
 
         return game;
     }
+
+    public Game getGame(long id){
+
+        Cursor cursor = db.query(DBHelper.TBL_GAME,
+                columnsGame,
+                DBHelper.GAME_ID + "=" + id,
+                null, null, null, null);
+
+        cursor.moveToFirst();
+
+        Game game = cursorToGame(cursor);
+
+        cursor.close();
+
+        return game;
+    }
+
+
+    public void updateGame(Game game) {
+
+        ContentValues values = new ContentValues();
+
+        values.put(DBHelper.GAME_TITLE, game.getTitle());
+        values.put(DBHelper.GAME_START, game.getStartTime());
+        values.put(DBHelper.GAME_END, game.getEndTime());
+
+
+        db.update(DBHelper.TBL_GAME, values,
+                DBHelper.GAME_ID + "=" + game.getId(), null);
+
+
+    }
+
+
+    public void deleteGame(Game game) {
+
+        long id = game.getId();
+
+        db.delete(DBHelper.TBL_GAME, DBHelper.GAME_ID + "=" + id, null);
+
+    }
+
+    public List<Game> getAllGames() {
+
+        List<Game> list = new ArrayList<>();
+
+        Cursor cursor = db.query(DBHelper.TBL_GAME, columnsGame,
+                null, null, null, null, null);
+
+        cursor.moveToFirst();
+
+        Game game;
+
+        while (!cursor.isAfterLast()) {
+            game = cursorToGame(cursor);
+            list.add(game);
+            cursor.moveToNext();
+        }
+
+        cursor.close();
+
+        return list;
+
+    }
+
+
+    /*
+     **************************************************************************************
+     */
+
+
+
+//    private Game cursorToGame(Cursor cursor) {
+//        int idIndex = cursor.getColumnIndex(DBHelper.GAME_ID);
+//        int idTitle = cursor.getColumnIndex(DBHelper.GAME_TITLE);
+//
+//
+//
+//        long index = cursor.getLong(idIndex);
+//        String title = cursor.getString(idTitle);
+//
+//
+//        Game game = new Game(index, title);
+//
+//        return game;
+//
+//    }
+
+//    public TileSet createTileSet(String title, long start, long end) {
+//
+//        ContentValues values = new ContentValues();
+//        values.put(DBHelper.GAME_TITLE, title);
+//        values.put(DBHelper.GAME_START, start);
+//        values.put(DBHelper.GAME_END, end);
+//
+//        long gameId = db.insert(DBHelper.TBL_GAME, null, values);
+//
+//        Cursor cursor = db.query(DBHelper.TBL_PLAYER,
+//                columnsGame,
+//                DBHelper.GAME_ID + "=" + gameId,
+//                null, null, null, null);
+//
+//        cursor.moveToFirst();
+//
+//        Game game = cursorToGame(cursor);
+//
+//        cursor.close();
+//
+//        return game;
+//    }
+
 
 
 
@@ -251,20 +361,21 @@ public class DataSource {
     }
 
 
-    public void addLaneToGame(Game game, int position) {
+    public void addLaneToGame(Game game, Lane lane, int position) {
 
         ContentValues values;
 
         values = new ContentValues();
         values.put(DBHelper.LANES_GAME_ID, game.getId());
         values.put(DBHelper.LANES_POSITION, position);
+        values.put(DBHelper.LANES_TILES, lane.toBytearray());
 
 
         db.insert(DBHelper.TBL_LANES, null, values);
     }
 
 
-    public void updateLane(Game game, int position, Lane lane) {
+    public void updateLane(Game game, Lane lane, int position ) {
 
         ContentValues values = new ContentValues();
 
@@ -308,88 +419,6 @@ public class DataSource {
     }
 
 
-//    public Player createGame(String title, long start, long end) {
-//
-//        ContentValues values = new ContentValues();
-//        values.put(DBHelper.GAME_TITLE, title);
-//        values.put(DBHelper.GAME_START, start);
-//        values.put(DBHelper.GAME_END, end);
-//
-//        long insertId = db.insert(DBHelper.TBL_GAME,null, values);
-//
-//        Cursor cursor = db.query(DBHelper.TBL_PLAYER,
-//                columnsGame,
-//                DBHelper.PLAYER_ID + "=" + insertId,
-//                null,null,null,null);
-//
-//        cursor.moveToFirst();
-//
-//        Player player = cursorToPlayer(cursor);
-//
-//        cursor.close();
-//
-//        return player;
-//    }
-//
-//
-//    public Player updatePlayer(long id, String name) {
-//
-//        ContentValues values = new ContentValues();
-//
-//        values.put(DBHelper.PLAYER_NAME, name);
-//
-//
-//        db.update(DBHelper.TBL_PLAYER, values,
-//                DBHelper.PLAYER_ID + "=" + id, null);
-//
-//
-//        Cursor cursor = db.query(DBHelper.TBL_PLAYER,
-//                columnsPlayer,
-//                DBHelper.PLAYER_ID + "=" + id,
-//                null, null, null, null);
-//
-//        cursor.moveToFirst();
-//        Player player = cursorToPlayer(cursor);
-//        cursor.close();
-//
-//        return player;
-//    }
-//
-//
-//
-//
-//    public void deletePlayer(Player player) {
-//
-//        long id = player.getId();
-//
-//        db.delete(DBHelper.TBL_PLAYER, DBHelper.PLAYER_ID + "=" + id, null);
-//
-//        Log.d(TAG, "Player gelöscht! ID: " + id + " Inhalt: " + player.toString());
-//
-//    }
-//
-//    public List<Player> getAllPlayers() {
-//
-//        List<Player> list = new ArrayList<>();
-//
-//        Cursor cursor = db.query(DBHelper.TBL_PLAYER, columnsPlayer,
-//                null, null, null, null, null);
-//
-//        cursor.moveToFirst();
-//
-//        Player player;
-//
-//        while (!cursor.isAfterLast()) {
-//            player = cursorToPlayer(cursor);
-//            list.add(player);
-//            cursor.moveToNext();
-//        }
-//
-//        cursor.close();
-//
-//        return list;
-//
-//    }
 
     /*
      **************************************************************************************

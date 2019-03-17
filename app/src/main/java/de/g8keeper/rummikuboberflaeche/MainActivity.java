@@ -36,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.btn_config:
 
+                intent = new Intent(this, TestActivity.class);
+                startActivity(intent);
+
                 Toast.makeText(this, "Einstellungen wurde gedrückt", Toast.LENGTH_SHORT).show();
                 break;
         }

@@ -34,12 +34,7 @@ public class Lane extends TileSet {
 
     public Lane(Lane lane) {
 
-        super();
-
-        for (Tile tile : lane) {
-//            super.addTile(tile);
-            addTile(tile);
-        }
+        super(lane);
 
     }
 

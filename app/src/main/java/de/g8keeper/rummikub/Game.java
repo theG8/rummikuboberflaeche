@@ -1,11 +1,21 @@
 package de.g8keeper.rummikub;
 
+import android.support.annotation.NonNull;
+import android.util.Log;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import de.g8keeper.rummikub.database.DataSource;
 
 public class Game {
     private static final String TAG = Game.class.getSimpleName();
+
+    public static final int STATE_NOT_STARTED = 1;
+    public static final int STATE_RUNNING = 2;
+    public static final int STATE_ENDED = 3;
 
 
     private long mID;
@@ -17,21 +27,48 @@ public class Game {
     private List<Player> mPlayers;
     private List<Lane> mLanes;
     private TilePool mPool;
-    private long mIDActualPlayer;
+    private int mIDActualPlayer;
+
+    private DataSource dataSource;
 
 
-    public Game(long id, String title) {
+
+    public Game(long id, String title, DataSource dataSource) {
         this.mID = id;
         this.mTitle = title;
-        mPlayers = new ArrayList<>();
-        mLanes = new ArrayList<>();
+        this.mPlayers = new ArrayList<>();
+        this.mLanes = new ArrayList<>();
+
+        this.dataSource = dataSource;
     }
 
-
-    public void addPlayer(Player player){
-
+    public Game(long id, String title, long start, long end, DataSource dataSource){
+        this(id,title, dataSource);
+        this.mStartTime = start;
+        this.mEndTime = end;
     }
 
+    public Game(Game game){
+        this.mID = game.mID;
+        this.mTitle = new String(game.mTitle);
+        this.mStartTime = game.mEndTime;
+        this.mEndTime = game.mEndTime;
+
+        this.mPlayers = new ArrayList<>();
+        for(Player p: game.mPlayers){
+            this.mPlayers.add(p);
+        }
+
+        this.mLanes = new ArrayList<>();
+        for(Lane l: game.mLanes){
+            this.mLanes.add(l);
+        }
+
+        this.mPool = new TilePool(game.mPool);
+        this.mIDActualPlayer = game.mIDActualPlayer;
+
+        this.dataSource = game.dataSource;
+    }
 
 
     private void buildPool() {
@@ -56,6 +93,14 @@ public class Game {
     }
 
 
+    public long getStartTime() {
+        return mStartTime;
+    }
+
+    public long getEndTime() {
+        return mEndTime;
+    }
+
     public long getId(){
         return mID;
     }
@@ -78,18 +123,66 @@ public class Game {
     }
 
     public List<Lane> getLanes() {
-        return mLanes;
-    }
-
-    public void setLanes(List<Lane> lanes) {
-        this.mLanes = lanes;
+        return Collections.unmodifiableList(mLanes);
     }
 
     public List<Player> getPlayers() {
-        return mPlayers;
+
+        return Collections.unmodifiableList(mPlayers);
     }
 
-    public void setPlayers(List<Player> players) {
-        this.mPlayers = players;
+    public void addPlayer(Player player){
+        Log.d(TAG, "addPlayer: " + player);
+        this.mPlayers.add(player);
+
+        dataSource.addPlayerToGame(this,player);
+    }
+
+
+    public Turn getActualTurn(){
+        List<Lane> lanes = new ArrayList<>();
+
+        for(Lane l: this.mLanes){
+            lanes.add(new Lane(l));
+        }
+
+        Turn turn = new Turn(
+                new TileSet(this.mPlayers.get(this.mIDActualPlayer).getTileSet()),
+                lanes
+        );
+
+        return turn;
+    }
+
+
+    public int state(){
+        int state = 0;
+
+        if(mStartTime == -1 && mEndTime == -1){
+            state = STATE_NOT_STARTED;
+        } else if (mStartTime != -1 && mEndTime == -1){
+            state = STATE_RUNNING;
+        } else if (mStartTime != 1 && mEndTime != -1){
+            state = STATE_ENDED;
+        }
+
+        return state;
+
+    }
+
+
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "game(" + this.mID + ", " + this.mTitle + ", " +
+                this.mStartTime + ", " + this.mEndTime + ", state: " + this.state() + ")";
+    }
+
+    public String toString(boolean b){
+
+        return "game(" + this.mID + ", " + this.mTitle + ", " +
+                this.mStartTime + ", " + this.mEndTime + ", state: " + this.state() + ", " +
+                "players: " + this.mPlayers + "\nLanes: " + this.mLanes + ")";
     }
 }

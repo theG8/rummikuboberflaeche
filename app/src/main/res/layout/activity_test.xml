@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TestActivity">
+
+
+    <Button
+        android:id="@+id/tAddGame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:onClick="onClick"
+        android:text="Create Game"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/tAddPlayer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:onClick="onClick"
+        android:text="add player"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tAddGame" />
+
+    <Button
+        android:id="@+id/tGetGame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:onClick="onClick"
+        android:text="get game"
+        app:layout_constraintStart_toEndOf="@+id/tAddGame"
+        app:layout_constraintTop_toTopOf="@+id/tAddGame" />
+
+    <Button
+        android:id="@+id/tToFullString"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:onClick="onClick"
+        android:text="game.fulltostring"
+        app:layout_constraintStart_toEndOf="@+id/tGetGame"
+        app:layout_constraintTop_toTopOf="@+id/tGetGame" />
+
+    <Button
+        android:id="@+id/tAddAllPlayers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:onClick="onClick"
+        android:text="add all players"
+        app:layout_constraintStart_toEndOf="@+id/tAddPlayer"
+        app:layout_constraintTop_toTopOf="@+id/tAddPlayer" />
+
+    <Button
+        android:id="@+id/tGetTurn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:onClick="onClick"
+        android:text="get Turn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tAddPlayer" />
+</android.support.constraint.ConstraintLayout>

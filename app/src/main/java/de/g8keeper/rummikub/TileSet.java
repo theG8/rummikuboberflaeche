@@ -36,6 +36,14 @@ public class TileSet implements IEvaluable, Iterable<Tile>, Serializable {
         mTiles = tmp;
     }
 
+    public TileSet(TileSet tileSet){
+        this();
+
+        for(Tile t: tileSet){
+            addTile(new Tile(t));
+        }
+
+    }
 
     private static byte[] getByterepresentation(TileSet tileSet) {
         byte[] byteArray = new byte[tileSet.size()];

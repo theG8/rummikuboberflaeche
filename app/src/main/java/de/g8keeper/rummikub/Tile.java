@@ -102,6 +102,11 @@ public class Tile implements Comparable<Tile>, IEvaluable, Serializable {
 
     }
 
+    public Tile(Tile tile){
+        this.mColor = tile.getColor();
+        this.mValue = tile.getValue();
+    }
+
 
     private static byte getByteRepresentation(Tile tile) {
 

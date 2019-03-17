@@ -23,6 +23,11 @@ public class Player implements Serializable {
         this.mTileSet = tileSet;
     }
 
+    public Player(Player player){
+        this(player.mId, new String(player.mName), new TileSet(player.mTileSet));
+    }
+
+
     public long getId() {
         return mId;
     }

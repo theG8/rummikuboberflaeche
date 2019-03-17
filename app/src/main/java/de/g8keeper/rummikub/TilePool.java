@@ -20,6 +20,13 @@ public class TilePool {
         buildPool();
     }
 
+    public TilePool(TilePool tilePool){
+        this.mPool = new ArrayList<>();
+        for(Tile t: tilePool.mPool){
+            this.mPool.add(new Tile(t));
+        }
+    }
+
     private void buildPool() {
         System.out.print("Building mPool...");
 

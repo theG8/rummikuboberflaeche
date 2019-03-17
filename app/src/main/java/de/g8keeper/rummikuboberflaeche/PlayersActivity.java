@@ -165,7 +165,7 @@ public class PlayersActivity extends AppCompatActivity {
                             return;
                         }
 
-                        mDataSource.updatePlayer(player.getId(),nameString);
+                        mDataSource.updatePlayer(player);
 
 
                         showAllEntries();
