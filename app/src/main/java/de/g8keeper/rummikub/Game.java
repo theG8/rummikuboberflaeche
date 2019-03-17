@@ -13,9 +13,9 @@ import de.g8keeper.rummikub.database.DataSource;
 public class Game {
     private static final String TAG = Game.class.getSimpleName();
 
-    public static final int STATE_NOT_STARTED = 1;
-    public static final int STATE_RUNNING = 2;
-    public static final int STATE_ENDED = 3;
+    public static final int STATE_NOT_STARTED = 0;
+    public static final int STATE_RUNNING = 1;
+    public static final int STATE_ENDED = 2;
 
 
     private long mID;

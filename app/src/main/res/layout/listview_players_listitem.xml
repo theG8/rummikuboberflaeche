@@ -2,12 +2,12 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/li_cl_ground"
+    android:id="@+id/li_players_cl_ground"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/li_iv_image"
+        android:id="@+id/li_players_iv_image"
         android:layout_width="90dp"
         android:layout_height="90dp"
         android:layout_marginStart="8dp"
@@ -21,25 +21,25 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
-        android:id="@+id/li_tv_name"
+        android:id="@+id/li_players_tv_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:textAppearance="@style/MyMenuTextAppearance"
         android:textSize="24sp"
-        app:layout_constraintStart_toEndOf="@+id/li_iv_image"
+        app:layout_constraintStart_toEndOf="@+id/li_players_iv_image"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Sebastian" />
 
     <TextView
-        android:id="@+id/li_tv_id"
+        android:id="@+id/li_players_tv_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintStart_toEndOf="@+id/li_iv_image"
-        app:layout_constraintTop_toBottomOf="@+id/li_tv_name"
+        app:layout_constraintStart_toEndOf="@+id/li_players_iv_image"
+        app:layout_constraintTop_toBottomOf="@+id/li_players_tv_name"
         tools:text="ID" />
 
 </android.support.constraint.ConstraintLayout>

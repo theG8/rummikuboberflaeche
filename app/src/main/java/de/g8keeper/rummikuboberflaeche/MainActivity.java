@@ -34,6 +34,13 @@ public class MainActivity extends AppCompatActivity {
 
                 break;
 
+            case R.id.btn_configure_games:
+
+                intent = new Intent(this, GamesActivity.class);
+                startActivity(intent);
+
+                break;
+
             case R.id.btn_config:
 
                 intent = new Intent(this, TestActivity.class);

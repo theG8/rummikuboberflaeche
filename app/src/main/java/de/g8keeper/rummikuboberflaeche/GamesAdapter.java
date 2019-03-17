@@ -12,27 +12,27 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import de.g8keeper.rummikub.Player;
+import de.g8keeper.rummikub.Game;
 
-public class PlayerAdapter extends ArrayAdapter<Player> {
+public class GamesAdapter extends ArrayAdapter<Game> {
 
-    private static final String TAG = PlayerAdapter.class.getSimpleName();
+    private static final String TAG = GamesAdapter.class.getSimpleName();
 
 
 
     private int resourceView;
     private Context context;
-    private List<Player> players;
+    private List<Game> games;
 
 
 
 
-    public PlayerAdapter(@NonNull Context context, int resource, @NonNull List<Player> objects) {
+    public GamesAdapter(@NonNull Context context, int resource, @NonNull List<Game> objects) {
         super(context, resource, objects);
 
         this.resourceView = resource;
         this.context  = context;
-        this.players = objects;
+        this.games = objects;
     }
 
     @NonNull
@@ -43,11 +43,16 @@ public class PlayerAdapter extends ArrayAdapter<Player> {
 
         Log.d(TAG, "getView: ");
 
-        TextView tvName = convertView.findViewById(R.id.li_players_tv_name);
-        TextView tvId = convertView.findViewById(R.id.li_players_tv_id);
+        TextView tvStatus = convertView.findViewById(R.id.li_games_tv_status);
+        TextView tvTitle = convertView.findViewById(R.id.li_games_tv_title);
+        TextView tvId = convertView.findViewById(R.id.li_games_tv_id);
 
-        tvName.setText(players.get(position).getName());
-        tvId.setText("ID: " + players.get(position).getId());
+        tvTitle.setText(games.get(position).getTitle());
+        tvId.setText("ID: " + games.get(position).getId());
+
+        String[] state = context.getResources().getStringArray(R.array.game_status);
+
+        tvStatus.setText(state[games.get(position).state()]);
 
         return convertView;
     }

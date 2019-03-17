@@ -1,9 +1,9 @@
 package de.g8keeper.rummikuboberflaeche;
 
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -22,10 +22,10 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.g8keeper.rummikub.Player;
+import de.g8keeper.rummikub.Game;
 import de.g8keeper.rummikub.database.DataSource;
 
-public class PlayersActivity extends AppCompatActivity {
+public class GamesActivity extends AppCompatActivity {
     private static final String TAG = PlayersActivity.class.getSimpleName();
 
 
@@ -33,29 +33,29 @@ public class PlayersActivity extends AppCompatActivity {
 
     DataSource mDataSource;
 
-    PlayerAdapter mAdapter;
+    GamesAdapter mAdapter;
 
-    List<Player> players = new ArrayList<>();
-    private ListView mLvPlayers;
+    List<Game> games = new ArrayList<>();
+    private ListView mLvGames;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_players);
+        setContentView(R.layout.activity_games);
 
         mDataSource = new DataSource(this);
 
 
-        Button btnAdd = findViewById(R.id.fab_add);
+        Button btnAdd = findViewById(R.id.fab_games_add);
 
 
-        mLvPlayers = findViewById(R.id.lv_players);
-        View vHeader = getLayoutInflater().inflate(R.layout.listview_players_header, null);
+        mLvGames = findViewById(R.id.lv_games);
+        View vHeader = getLayoutInflater().inflate(R.layout.listview_games_header, null);
 
-        mAdapter = new PlayerAdapter(this, R.layout.listview_players_listitem, players);
+        mAdapter = new GamesAdapter(this, R.layout.listview_games_listitem, games);
 
-        mLvPlayers.addHeaderView(vHeader);
-        mLvPlayers.setAdapter(mAdapter);
+        mLvGames.addHeaderView(vHeader);
+        mLvGames.setAdapter(mAdapter);
 
         inizializeContextualActionBar();
 
@@ -84,7 +84,7 @@ public class PlayersActivity extends AppCompatActivity {
 
     private void showAllEntries(){
         mAdapter.clear();
-        mAdapter.addAll(mDataSource.getAllPlayers());
+        mAdapter.addAll(mDataSource.getAllGames());
         mAdapter.notifyDataSetChanged();
     }
 
@@ -92,9 +92,9 @@ public class PlayersActivity extends AppCompatActivity {
     public void onButtonClick(View view) {
 
         switch (view.getId()) {
-            case R.id.fab_add:
+            case R.id.fab_games_add:
 
-                AlertDialog dialogAdd = createAddPlayerDialog();
+                AlertDialog dialogAdd = createAddGameDialog();
                 dialogAdd.show();
                 break;
         }
@@ -102,28 +102,28 @@ public class PlayersActivity extends AppCompatActivity {
 
 
 
-    private AlertDialog createAddPlayerDialog() {
+    private AlertDialog createAddGameDialog() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
 
-        View view = inflater.inflate(R.layout.dialog_add_player, null);
+        View view = inflater.inflate(R.layout.dialog_add_game, null);
 
-        final EditText etName = view.findViewById(R.id.dlg_add_name);
+        final EditText etTitle = view.findViewById(R.id.dlg_games_add_name);
 
         builder.setView(view).
                 setTitle("Spieler hinzufügen").
                 setPositiveButton("Hinzufügen", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String nameString = etName.getText().toString();
+                        String titleString = etTitle.getText().toString();
 
-                        if(TextUtils.isEmpty(nameString)){
-                            Toast.makeText(PlayersActivity.this, "Bitte Name eingeben", Toast.LENGTH_SHORT).show();
+                        if(TextUtils.isEmpty(titleString)){
+                            Toast.makeText(GamesActivity.this, "Bitte Name eingeben", Toast.LENGTH_SHORT).show();
                         }
 
-                        Player player = mDataSource.createPlayer(nameString);
-                        players.add(player);
+                        Game game = mDataSource.createGame(titleString,-1,-1);
+                        games.add(game);
 
                         mAdapter.notifyDataSetChanged();
 
@@ -140,15 +140,15 @@ public class PlayersActivity extends AppCompatActivity {
     }
 
 
-    private AlertDialog createEditPlayerDialog(Player player) {
+    private AlertDialog createEditGamesDialog(Game game) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
 
-        View view = inflater.inflate(R.layout.dialog_add_player, null);
+        View view = inflater.inflate(R.layout.dialog_add_game, null);
 
-        final EditText etName = view.findViewById(R.id.dlg_add_name);
-        etName.setText(player.getName());
+        final EditText etTitle = view.findViewById(R.id.dlg_games_add_name);
+        etTitle.setText(game.getTitle());
 
         builder.setView(view).
                 setTitle("Name ändern").
@@ -156,14 +156,17 @@ public class PlayersActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                        String nameString = etName.getText().toString();
+                        String titleString = etTitle.getText().toString();
 
-                        if(TextUtils.isEmpty(nameString)){
-                            Toast.makeText(PlayersActivity.this, "Name darf nicht leer sein", Toast.LENGTH_SHORT).show();
+                        if(TextUtils.isEmpty(titleString)){
+                            Toast.makeText(GamesActivity.this, "Titel darf nicht leer sein", Toast.LENGTH_SHORT).show();
                             return;
+                        } else {
+                            game.setTitle(titleString);
+                            mDataSource.updateGame(game);
                         }
 
-                        mDataSource.updatePlayer(player);
+
 
 
                         showAllEntries();
@@ -183,10 +186,10 @@ public class PlayersActivity extends AppCompatActivity {
 
     private void inizializeContextualActionBar() {
         InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-        mLvPlayers.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        mLvGames.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
 
 
-        mLvPlayers.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+        mLvGames.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
 
             int selCount = 0;
 
@@ -201,17 +204,6 @@ public class PlayersActivity extends AppCompatActivity {
 
 
 
-//                View view = mAdapter.getView(position-1, null, null).findViewById(R.id.li_tv_name);
-//
-//                Log.d(TAG, "onItemCheckedStateChanged: " + ((TextView) view).getText());
-//                runOnUiThread(() -> ((TextView) view).setText("CHECKED"));
-
-
-
-//                .setBackgroundColor();
-
-
-
 
                 String cabTitel = selCount + " " + getString(R.string.cab_checked_string);
                 mode.setTitle(cabTitel);
@@ -220,13 +212,13 @@ public class PlayersActivity extends AppCompatActivity {
 
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                getMenuInflater().inflate(R.menu.menu_players_contextual_action_bar, menu);
+                getMenuInflater().inflate(R.menu.menu_games_contextual_action_bar, menu);
                 return true;
             }
 
             @Override
             public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                MenuItem item = menu.findItem(R.id.cab_players_change);
+                MenuItem item = menu.findItem(R.id.cab_games_change);
                 if (selCount == 1) {
                     item.setVisible(true);
                 } else {
@@ -240,21 +232,21 @@ public class PlayersActivity extends AppCompatActivity {
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 boolean returnValue = true;
 
-                SparseBooleanArray touchedPlayersPosition = mLvPlayers.getCheckedItemPositions();
+                SparseBooleanArray touchedGamesPosition = mLvGames.getCheckedItemPositions();
 
                 switch (item.getItemId()) {
 
-                    case R.id.cab_players_delete: // löschen wurde geklickt
+                    case R.id.cab_games_delete: // löschen wurde geklickt
 
-                        for (int i = 0; i < touchedPlayersPosition.size(); i++) {
-                            boolean isChecked = touchedPlayersPosition.valueAt(i);
+                        for (int i = 0; i < touchedGamesPosition.size(); i++) {
+                            boolean isChecked = touchedGamesPosition.valueAt(i);
                             if (isChecked) {
-                                int positionInListView = touchedPlayersPosition.keyAt(i);
-                                Player player = (Player) mLvPlayers.
+                                int positionInListView = touchedGamesPosition.keyAt(i);
+                                Game game = (Game) mLvGames.
                                         getItemAtPosition(positionInListView);
 
-                                Log.d(TAG, "Position im ListView: " + positionInListView + " Inhalt: " + player.toString());
-                                mDataSource.deletePlayer(player);
+                                Log.d(TAG, "Position im ListView: " + positionInListView + " Inhalt: " + game.toString());
+                                mDataSource.deleteGame(game);
                             }
                         }
 
@@ -264,17 +256,17 @@ public class PlayersActivity extends AppCompatActivity {
                         mode.finish();
                         break;
 
-                    case R.id.cab_players_change:
+                    case R.id.cab_games_change:
 
-                        for (int i = 0; i < touchedPlayersPosition.size(); i++) {
-                            boolean isChecked = touchedPlayersPosition.valueAt(i);
+                        for (int i = 0; i < touchedGamesPosition.size(); i++) {
+                            boolean isChecked = touchedGamesPosition.valueAt(i);
                             if (isChecked) {
-                                int positionInListView = touchedPlayersPosition.keyAt(i);
-                                Player player = (Player) mLvPlayers.
+                                int positionInListView = touchedGamesPosition.keyAt(i);
+                                Game game = (Game) mLvGames.
                                         getItemAtPosition(positionInListView);
 
-                                AlertDialog editPlayerDialog = createEditPlayerDialog(player);
-                                editPlayerDialog.show();
+                                AlertDialog editGameDialog = createEditGamesDialog(game);
+                                editGameDialog.show();
 
 
 
