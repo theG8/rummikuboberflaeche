@@ -28,6 +28,7 @@ public class GamesAdapter extends ArrayAdapter<Game> {
 
 
 
+
     public GamesAdapter(@NonNull Context context, int resource, @NonNull List<Game> objects) {
         super(context, resource, objects);
 
@@ -57,30 +58,30 @@ public class GamesAdapter extends ArrayAdapter<Game> {
 
         tvStatus.setText(state[game.state()]);
 
-        convertView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: " + game.getTitle() + " " + game.getPlayers());
-
-                if(game.hasPlayers()){
-
-                    Intent intent = new Intent(getContext(), PlaygroundActivity.class);
-                    intent.putExtra("game", game.getId());
-                    getContext().startActivity(intent);
-
-                } else {
-
-
-
-
-                }
-
-
-
-
-
-            }
-        });
+//        convertView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Log.d(TAG, "onClick: " + game.getTitle() + " " + game.getPlayers());
+//
+//                if(game.hasPlayers()){
+//
+//                    Intent intent = new Intent(getContext(), PlaygroundActivity.class);
+//                    intent.putExtra("game", game.getId());
+//                    getContext().startActivity(intent);
+//
+//                } else {
+//
+//
+//
+//
+//                }
+//
+//
+//
+//
+//
+//            }
+//        });
 
         return convertView;
     }

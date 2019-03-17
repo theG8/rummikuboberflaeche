@@ -17,6 +17,7 @@ import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -43,6 +44,10 @@ public class PlayersActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_players);
 
+
+
+
+
         mDataSource = new DataSource(this);
 
 
@@ -53,6 +58,8 @@ public class PlayersActivity extends AppCompatActivity {
         View vHeader = getLayoutInflater().inflate(R.layout.listview_players_header, null);
 
         mAdapter = new PlayerAdapter(this, R.layout.listview_players_listitem, players);
+
+
 
         mLvPlayers.addHeaderView(vHeader);
         mLvPlayers.setAdapter(mAdapter);
@@ -200,16 +207,9 @@ public class PlayersActivity extends AppCompatActivity {
                 }
 
 
-
-//                View view = mAdapter.getView(position-1, null, null).findViewById(R.id.li_tv_name);
-//
-//                Log.d(TAG, "onItemCheckedStateChanged: " + ((TextView) view).getText());
-//                runOnUiThread(() -> ((TextView) view).setText("CHECKED"));
-
-
-
-//                .setBackgroundColor();
-
+                mAdapter.setItemChecked((int) id, checked);
+                mAdapter.notifyDataSetChanged();
+                Log.d(TAG, "onItemCheckedStateChanged: id: " + id + " checked: " + checked);
 
 
 

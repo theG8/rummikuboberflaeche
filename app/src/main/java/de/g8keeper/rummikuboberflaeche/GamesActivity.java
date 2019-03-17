@@ -1,6 +1,8 @@
 package de.g8keeper.rummikuboberflaeche;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -27,8 +30,6 @@ import de.g8keeper.rummikub.database.DataSource;
 
 public class GamesActivity extends AppCompatActivity {
     private static final String TAG = PlayersActivity.class.getSimpleName();
-
-
 
 
     DataSource mDataSource;
@@ -56,6 +57,27 @@ public class GamesActivity extends AppCompatActivity {
 
         mLvGames.addHeaderView(vHeader);
         mLvGames.setAdapter(mAdapter);
+        mLvGames.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(TAG, "onItemClick: " + position + " id: " + id);
+                Game game = mAdapter.getItem(position - 1);
+
+                if (game.hasPlayers()) {
+
+                    Intent intent = new Intent(getBaseContext(), PlaygroundActivity.class);
+                    intent.putExtra("game", game.getId());
+                    startActivity(intent);
+
+                } else {
+
+
+
+                }
+
+
+            }
+        });
 
         inizializeContextualActionBar();
 
@@ -82,7 +104,7 @@ public class GamesActivity extends AppCompatActivity {
 
     }
 
-    private void showAllEntries(){
+    private void showAllEntries() {
         mAdapter.clear();
         mAdapter.addAll(mDataSource.getAllGames());
         mAdapter.notifyDataSetChanged();
@@ -101,7 +123,6 @@ public class GamesActivity extends AppCompatActivity {
     }
 
 
-
     private AlertDialog createAddGameDialog() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -118,11 +139,11 @@ public class GamesActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         String titleString = etTitle.getText().toString();
 
-                        if(TextUtils.isEmpty(titleString)){
+                        if (TextUtils.isEmpty(titleString)) {
                             Toast.makeText(GamesActivity.this, "Bitte Name eingeben", Toast.LENGTH_SHORT).show();
                         }
 
-                        Game game = mDataSource.createGame(titleString,-1,-1);
+                        Game game = mDataSource.createGame(titleString, -1, -1);
                         games.add(game);
 
                         mAdapter.notifyDataSetChanged();
@@ -158,15 +179,13 @@ public class GamesActivity extends AppCompatActivity {
 
                         String titleString = etTitle.getText().toString();
 
-                        if(TextUtils.isEmpty(titleString)){
+                        if (TextUtils.isEmpty(titleString)) {
                             Toast.makeText(GamesActivity.this, "Titel darf nicht leer sein", Toast.LENGTH_SHORT).show();
                             return;
                         } else {
                             game.setTitle(titleString);
                             mDataSource.updateGame(game);
                         }
-
-
 
 
                         showAllEntries();
@@ -201,8 +220,6 @@ public class GamesActivity extends AppCompatActivity {
                 } else {
                     selCount--;
                 }
-
-
 
 
                 String cabTitel = selCount + " " + getString(R.string.cab_checked_string);
@@ -269,7 +286,6 @@ public class GamesActivity extends AppCompatActivity {
                                 editGameDialog.show();
 
 
-
                             }
                         }
 
@@ -294,7 +310,6 @@ public class GamesActivity extends AppCompatActivity {
         });
 
     }
-
 
 
 }
