@@ -4,6 +4,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
 import android.widget.HorizontalScrollView;
@@ -49,6 +50,8 @@ public class PlaygroundActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playground);
 
+        long gameID = getIntent().getLongExtra("game",-1L);
+
         svVertical = findViewById(R.id.sv_vertical);
         svHorizontal = findViewById(R.id.sv_horizontal);
         scTileSet = findViewById(R.id.sv_tile_set);
@@ -56,11 +59,12 @@ public class PlaygroundActivity extends AppCompatActivity {
 
         llPlayground = findViewById(R.id.ll_playground);
 
-
         llPlayground.setOnDragListener(new ScrollOnDragListener());
 
 
-        testCode();
+        Log.d(TAG, "onCreate: gameID: " + gameID);
+
+//        testCode();
     }
 
     private void testCode(){

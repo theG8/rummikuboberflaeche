@@ -278,12 +278,18 @@ public class DataSource {
         Cursor cursor = db.query(DBHelper.TBL_GAME, columnsGame,
                 null, null, null, null, null);
 
+        int idID = cursor.getColumnIndex(DBHelper.GAME_ID);
         cursor.moveToFirst();
 
         Game game;
+        long gameID;
+
+
 
         while (!cursor.isAfterLast()) {
-            game = cursorToGame(cursor);
+            gameID = cursor.getLong(idID);
+
+            game = getGame(gameID);
             list.add(game);
             cursor.moveToNext();
         }

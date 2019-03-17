@@ -156,6 +156,10 @@ public class Game {
 
     }
 
+    public boolean hasPlayers(){
+        return mPlayers.size() != 0;
+    }
+
     public Turn getActualTurn() {
         List<Lane> lanes = new ArrayList<>();
 
