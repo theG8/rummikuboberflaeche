@@ -69,4 +69,15 @@
         android:text="get Turn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tAddPlayer" />
+
+    <Button
+        android:id="@+id/tAddLanes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:onClick="onClick"
+        android:text="add lanes"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tGetTurn" />
 </android.support.constraint.ConstraintLayout>

@@ -138,6 +138,23 @@ public class Game {
         dataSource.addPlayerToGame(this,player);
     }
 
+    public void addLane(Lane lane) {
+        Log.d(TAG, "addLane: " + lane);
+        this.mLanes.add(lane);
+
+        dataSource.addLaneToGame(this,lane,this.mLanes.indexOf(lane));
+
+    }
+
+
+    public void loadGameData(){
+        mPlayers = dataSource.getGamePlayers(this);
+        mIDActualPlayer = dataSource.getGameActualPlayer(this);
+
+        mLanes = dataSource.getGameLanes(this);
+
+    }
+
 
     public Turn getActualTurn(){
         List<Lane> lanes = new ArrayList<>();
@@ -185,4 +202,6 @@ public class Game {
                 this.mStartTime + ", " + this.mEndTime + ", state: " + this.state() + ", " +
                 "players: " + this.mPlayers + "\nLanes: " + this.mLanes + ")";
     }
+
+
 }

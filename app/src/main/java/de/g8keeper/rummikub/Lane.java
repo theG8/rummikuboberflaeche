@@ -383,7 +383,7 @@ public class Lane extends TileSet {
 
     @Override
     public String toString() {
-        return super.toString();
+        return "Lane(" + mTiles.toString() + ")";
     }
 
     @Override

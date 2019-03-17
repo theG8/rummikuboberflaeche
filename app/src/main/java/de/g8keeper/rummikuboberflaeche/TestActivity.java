@@ -9,6 +9,7 @@ import java.util.List;
 
 import de.g8keeper.rummikub.Color;
 import de.g8keeper.rummikub.Game;
+import de.g8keeper.rummikub.Lane;
 import de.g8keeper.rummikub.Player;
 import de.g8keeper.rummikub.Tile;
 import de.g8keeper.rummikub.Turn;
@@ -56,6 +57,7 @@ public class TestActivity extends AppCompatActivity {
             case R.id.tGetGame:
 
                 game = dataSource.getGame(1);
+                game.loadGameData();
 
                 Log.d(TAG, "got game: " + game.toString());
 
@@ -103,6 +105,30 @@ public class TestActivity extends AppCompatActivity {
                 turn = game.getActualTurn();
                 Log.d(TAG, "got new turn " + turn + " from " + game );
 
+
+                break;
+
+            case R.id.tAddLanes:
+
+                Lane lane;
+
+                lane = new Lane();
+
+                lane.addTile(new Tile(Color.BLACK,4));
+                lane.addTile(new Tile(Color.BLACK,5));
+                lane.addTile(new Tile(Color.BLACK,6));
+                lane.addTile(new Tile(Color.BLACK,7));
+
+                game.addLane(lane);
+
+                lane = new Lane();
+
+                lane.addTile(new Tile(Color.BLUE,9));
+                lane.addTile(new Tile(Color.BLUE,10));
+                lane.addTile(new Tile(Color.BLUE,11));
+                lane.addTile(new Tile(Color.BLUE,12));
+
+                game.addLane(lane);
 
                 break;
         }

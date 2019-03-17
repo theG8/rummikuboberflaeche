@@ -103,7 +103,7 @@ public class TileSet implements IEvaluable, Iterable<Tile>, Serializable {
 
     @Override
     public String toString() {
-        return mTiles.toString();
+        return "TileSet(" + mTiles.toString() + ")";
     }
 
     @Override

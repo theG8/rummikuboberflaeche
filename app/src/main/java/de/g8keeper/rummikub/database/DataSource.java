@@ -6,15 +6,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import de.g8keeper.rummikub.Game;
 import de.g8keeper.rummikub.Lane;
 import de.g8keeper.rummikub.Player;
-import de.g8keeper.rummikub.TileSet;
 
 public class DataSource {
 
@@ -41,7 +38,7 @@ public class DataSource {
             DBHelper.PLAYERS_TOKEN
     };
 
-    private String[] columsLanes = {
+    private String[] columnsLanes = {
 
             DBHelper.LANES_GAME_ID,
             DBHelper.LANES_POSITION,
@@ -89,6 +86,7 @@ public class DataSource {
         int idName = cursor.getColumnIndex(DBHelper.PLAYER_NAME);
 
         long id = cursor.getLong(idIndex);
+
         String name = cursor.getString(idName);
 
         Player player = new Player(id, name);
@@ -172,8 +170,6 @@ public class DataSource {
     }
 
 
-
-
     /*
      **************************************************************************************
      */
@@ -222,7 +218,7 @@ public class DataSource {
         return game;
     }
 
-    public Game getGame(long id){
+    public Game getGame(long id) {
 
         Cursor cursor = db.query(DBHelper.TBL_GAME,
                 columnsGame,
@@ -292,6 +288,87 @@ public class DataSource {
      */
 
 
+    public List<Player> getGamePlayers(Game game) {
+
+        List<Player> players = new ArrayList<>();
+        int idPlayer;
+
+        Player player;
+        long id;
+
+        int count;
+
+        Cursor cursor = db.query(DBHelper.TBL_PLAYERS, columnsGamePlayers,
+                DBHelper.PLAYERS_GAME_ID + " = " + game.getId(), null, null, null, null);
+
+
+        idPlayer = cursor.getColumnIndex(DBHelper.PLAYERS_PLAYER_ID);
+
+
+        cursor.moveToFirst();
+
+        while (!cursor.isAfterLast()) {
+            id = cursor.getLong(idPlayer);
+
+            player = getPlayer(id);
+            players.add(player);
+
+            cursor.moveToNext();
+        }
+
+        cursor.close();
+
+        return players;
+
+    }
+
+    public List<Lane> getGameLanes(Game game){
+        List<Lane> lanes = new ArrayList<>();
+
+        Lane lane;
+
+        Cursor cursor = db.query(DBHelper.TBL_LANES, new String[]{DBHelper.LANES_TILES},
+                DBHelper.LANES_GAME_ID + " = " + game.getId(), null, null, null, DBHelper.LANES_POSITION + " ASC");
+
+
+        int idTiles = cursor.getColumnIndex(DBHelper.LANES_TILES);
+
+        cursor.moveToFirst();
+
+        while (!cursor.isAfterLast()) {
+            lane = new Lane(cursor.getBlob(idTiles));
+
+            lanes.add(lane);
+
+            cursor.moveToNext();
+        }
+
+        cursor.close();
+
+        return lanes;
+
+    }
+
+    public int getGameActualPlayer(Game game){
+
+        int playerID = 0;
+
+        Cursor cursor = db.query(DBHelper.TBL_PLAYERS, new String[]{DBHelper.PLAYERS_PLAYER_ID},
+                DBHelper.PLAYERS_GAME_ID + " = " + game.getId() + " AND " +
+                        DBHelper.PLAYERS_TOKEN + " = 1", null, null, null, null);
+
+        cursor.moveToFirst();
+
+        while (!cursor.isAfterLast()) {
+            playerID = cursor.getInt(1);
+        }
+
+        cursor.close();
+
+        return playerID;
+    }
+
+
 
 //    private Game cursorToGame(Cursor cursor) {
 //        int idIndex = cursor.getColumnIndex(DBHelper.GAME_ID);
@@ -333,10 +410,7 @@ public class DataSource {
 //    }
 
 
-
-
-
-    public void addTileSetToPlayer(Game game, Player player){
+    public void addTileSetToPlayer(Game game, Player player) {
 
         ContentValues values;
 
@@ -375,7 +449,7 @@ public class DataSource {
     }
 
 
-    public void updateLane(Game game, Lane lane, int position ) {
+    public void updateLane(Game game, Lane lane, int position) {
 
         ContentValues values = new ContentValues();
 
