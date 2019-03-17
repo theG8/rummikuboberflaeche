@@ -12,6 +12,7 @@ import java.util.List;
 import de.g8keeper.rummikub.Game;
 import de.g8keeper.rummikub.Lane;
 import de.g8keeper.rummikub.Player;
+import de.g8keeper.rummikub.TileSet;
 
 public class DataSource {
 
@@ -229,6 +230,8 @@ public class DataSource {
 
         Game game = cursorToGame(cursor);
 
+
+
         cursor.close();
 
         return game;
@@ -255,6 +258,9 @@ public class DataSource {
 
         long id = game.getId();
 
+        db.delete(DBHelper.TBL_LANES, DBHelper.LANES_GAME_ID + " = " + id, null);
+        db.delete(DBHelper.TBL_TILESETS, DBHelper.TILESETS_GAME_ID + " = " + id,null);
+        db.delete(DBHelper.TBL_PLAYERS, DBHelper.PLAYERS_GAME_ID + " = " + id,null);
         db.delete(DBHelper.TBL_GAME, DBHelper.GAME_ID + "=" + id, null);
 
     }
@@ -288,6 +294,7 @@ public class DataSource {
      */
 
 
+
     public List<Player> getGamePlayers(Game game) {
 
         List<Player> players = new ArrayList<>();
@@ -311,7 +318,11 @@ public class DataSource {
             id = cursor.getLong(idPlayer);
 
             player = getPlayer(id);
+
+            loadGamePlayerTileSet(game, player);
+
             players.add(player);
+
 
             cursor.moveToNext();
         }
@@ -355,11 +366,12 @@ public class DataSource {
 
         Cursor cursor = db.query(DBHelper.TBL_PLAYERS, new String[]{DBHelper.PLAYERS_PLAYER_ID},
                 DBHelper.PLAYERS_GAME_ID + " = " + game.getId() + " AND " +
-                        DBHelper.PLAYERS_TOKEN + " = 1", null, null, null, null);
+                        DBHelper.PLAYERS_TOKEN + " = 1",
+                null, null, null, null);
 
         cursor.moveToFirst();
 
-        while (!cursor.isAfterLast()) {
+        if (!cursor.isAfterLast()) {
             playerID = cursor.getInt(1);
         }
 
@@ -368,6 +380,22 @@ public class DataSource {
         return playerID;
     }
 
+    private void loadGamePlayerTileSet(Game game, Player player){
+
+        Cursor cursor = db.query(DBHelper.TBL_TILESETS, new String[]{DBHelper.TILESETS_TILES},
+                DBHelper.TILESETS_GAME_ID + " = " + game.getId() + " AND " +
+                DBHelper.TILESETS_PLAYER_ID + " + " + player.getId(),
+                null, null, null, null);
+
+        cursor.moveToFirst();
+
+        if (!cursor.isAfterLast()){
+            player.setTileSet(new TileSet(cursor.getBlob(1)));
+        }
+
+        cursor.close();
+
+    }
 
 
 //    private Game cursorToGame(Cursor cursor) {
@@ -423,16 +451,16 @@ public class DataSource {
     }
 
 
-    public void updateTileSet(Game game, Player player) {
-
-        ContentValues values = new ContentValues();
-
-        values.put(DBHelper.TILESETS_TILES, player.getTileSet().toBytearray());
-
-        db.update(DBHelper.TBL_TILESETS, values,
-                DBHelper.TILESETS_GAME_ID + "=" + game.getId(), null);
-
-    }
+//    public void updateTileSet(Game game, Player player) {
+//
+//        ContentValues values = new ContentValues();
+//
+//        values.put(DBHelper.TILESETS_TILES, player.getTileSet().toBytearray());
+//
+//        db.update(DBHelper.TBL_TILESETS, values,
+//                DBHelper.TILESETS_GAME_ID + "=" + game.getId(), null);
+//
+//    }
 
 
     public void addLaneToGame(Game game, Lane lane, int position) {
@@ -482,15 +510,15 @@ public class DataSource {
     }
 
 
-    public void removePlayerFromGame(Game game, Player player) {
-
-        db.delete(DBHelper.TBL_PLAYERS,
-                DBHelper.PLAYERS_GAME_ID + " = " + game.getId() + " AND " +
-                        DBHelper.PLAYERS_PLAYER_ID + " = " + player.getId(),
-                null
-        );
-
-    }
+//    public void removePlayerFromGame(Game game, Player player) {
+//
+//        db.delete(DBHelper.TBL_PLAYERS,
+//                DBHelper.PLAYERS_GAME_ID + " = " + game.getId() + " AND " +
+//                        DBHelper.PLAYERS_PLAYER_ID + " = " + player.getId(),
+//                null
+//        );
+//
+//    }
 
 
 

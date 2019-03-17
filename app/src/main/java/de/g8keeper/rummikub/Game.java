@@ -32,7 +32,6 @@ public class Game {
     private DataSource dataSource;
 
 
-
     public Game(long id, String title, DataSource dataSource) {
         this.mID = id;
         this.mTitle = title;
@@ -42,25 +41,25 @@ public class Game {
         this.dataSource = dataSource;
     }
 
-    public Game(long id, String title, long start, long end, DataSource dataSource){
-        this(id,title, dataSource);
+    public Game(long id, String title, long start, long end, DataSource dataSource) {
+        this(id, title, dataSource);
         this.mStartTime = start;
         this.mEndTime = end;
     }
 
-    public Game(Game game){
+    public Game(Game game) {
         this.mID = game.mID;
         this.mTitle = new String(game.mTitle);
         this.mStartTime = game.mEndTime;
         this.mEndTime = game.mEndTime;
 
         this.mPlayers = new ArrayList<>();
-        for(Player p: game.mPlayers){
+        for (Player p : game.mPlayers) {
             this.mPlayers.add(p);
         }
 
         this.mLanes = new ArrayList<>();
-        for(Lane l: game.mLanes){
+        for (Lane l : game.mLanes) {
             this.mLanes.add(l);
         }
 
@@ -83,9 +82,9 @@ public class Game {
             }
         }
 
-        if(mLanes != null){
-            for(Lane lane: mLanes){
-                for (Tile tile : lane){
+        if (mLanes != null) {
+            for (Lane lane : mLanes) {
+                for (Tile tile : lane) {
                     mPool.removeTile(tile);
                 }
             }
@@ -101,7 +100,7 @@ public class Game {
         return mEndTime;
     }
 
-    public long getId(){
+    public long getId() {
         return mID;
     }
 
@@ -131,35 +130,42 @@ public class Game {
         return Collections.unmodifiableList(mPlayers);
     }
 
-    public void addPlayer(Player player){
+    public void addPlayer(Player player) {
         Log.d(TAG, "addPlayer: " + player);
         this.mPlayers.add(player);
 
-        dataSource.addPlayerToGame(this,player);
+        dataSource.addPlayerToGame(this, player);
     }
 
     public void addLane(Lane lane) {
         Log.d(TAG, "addLane: " + lane);
         this.mLanes.add(lane);
 
-        dataSource.addLaneToGame(this,lane,this.mLanes.indexOf(lane));
+        dataSource.addLaneToGame(this, lane, this.mLanes.indexOf(lane));
 
     }
 
 
-    public void loadGameData(){
+    public void loadGameData() {
         mPlayers = dataSource.getGamePlayers(this);
+
         mIDActualPlayer = dataSource.getGameActualPlayer(this);
 
         mLanes = dataSource.getGameLanes(this);
 
+        buildPool();
+
     }
 
+    public void saveGameData() {
 
-    public Turn getActualTurn(){
+
+    }
+
+    public Turn getActualTurn() {
         List<Lane> lanes = new ArrayList<>();
 
-        for(Lane l: this.mLanes){
+        for (Lane l : this.mLanes) {
             lanes.add(new Lane(l));
         }
 
@@ -172,21 +178,20 @@ public class Game {
     }
 
 
-    public int state(){
+    public int state() {
         int state = 0;
 
-        if(mStartTime == -1 && mEndTime == -1){
+        if (mStartTime == -1 && mEndTime == -1) {
             state = STATE_NOT_STARTED;
-        } else if (mStartTime != -1 && mEndTime == -1){
+        } else if (mStartTime != -1 && mEndTime == -1) {
             state = STATE_RUNNING;
-        } else if (mStartTime != 1 && mEndTime != -1){
+        } else if (mStartTime != 1 && mEndTime != -1) {
             state = STATE_ENDED;
         }
 
         return state;
 
     }
-
 
 
     @NonNull
@@ -196,7 +201,7 @@ public class Game {
                 this.mStartTime + ", " + this.mEndTime + ", state: " + this.state() + ")";
     }
 
-    public String toString(boolean b){
+    public String toString(boolean b) {
 
         return "game(" + this.mID + ", " + this.mTitle + ", " +
                 this.mStartTime + ", " + this.mEndTime + ", state: " + this.state() + ", " +
