@@ -13,7 +13,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DB_NAME = "rummikub_db";
 
-    public static final int DB_VERSION = 3;
+    public static final int DB_VERSION = 4;
 
 
     public static final String TBL_PLAYER = "tblPlayer";
@@ -26,13 +26,14 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String GAME_TITLE = "titel"; //TEXT
     public static final String GAME_START = "start"; //DATETIME
     public static final String GAME_END = "end"; //DATETIME
+    public static final String GAME_ACTPLAYER = "actPlayer";
 
 
 
     public static final String TBL_PLAYERS = "tblPlayers";
     public static final String PLAYERS_GAME_ID = "id_game"; //INTEGER
     public static final String PLAYERS_PLAYER_ID = "id_player";
-    public static final String PLAYERS_TOKEN = "token";
+//    public static final String PLAYERS_TOKEN = "token";
 
 
     public static final String TBL_LANES = "tblLanes";
@@ -72,14 +73,15 @@ public class DBHelper extends SQLiteOpenHelper {
                 mkCOL(GAME_ID, "INTEGER PRIMARY KEY AUTOINCREMENT"),
                 mkCOL(GAME_TITLE, "TEXT NOT NULL"),
                 mkCOL(GAME_START, "INTEGER DEFAULT 0"),
-                mkCOL(GAME_END, "INTEGER DEFAULT 0")
+                mkCOL(GAME_END, "INTEGER DEFAULT 0"),
+                mkCOL(GAME_ACTPLAYER, "INTEGER DEFAULT 0")
         );
 
         // tblGamePlayers:
         String tblPlayers = mkTBL(TBL_PLAYERS,
                 mkCOL(PLAYERS_GAME_ID, "INTEGER NOT NULL"),
                 mkCOL(PLAYERS_PLAYER_ID, "INTEGER NOT NULL"),
-                mkCOL(PLAYERS_TOKEN, "BOOLEAN NOT NULL DEFAULT 0"),
+//                mkCOL(PLAYERS_TOKEN, "BOOLEAN NOT NULL DEFAULT 0"),
                 mkFK(PLAYERS_GAME_ID, TBL_GAME, GAME_ID),
                 mkFK(PLAYERS_PLAYER_ID, TBL_PLAYER, PLAYER_ID)
         );

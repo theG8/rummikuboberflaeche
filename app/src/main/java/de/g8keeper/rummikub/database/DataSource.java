@@ -30,13 +30,14 @@ public class DataSource {
             DBHelper.GAME_ID,
             DBHelper.GAME_TITLE,
             DBHelper.GAME_START,
-            DBHelper.GAME_END
+            DBHelper.GAME_END,
+            DBHelper.GAME_ACTPLAYER
     };
 
     private String[] columnsGamePlayers = {
             DBHelper.PLAYERS_GAME_ID,
             DBHelper.PLAYERS_PLAYER_ID,
-            DBHelper.PLAYERS_TOKEN
+//            DBHelper.PLAYERS_TOKEN
     };
 
     private String[] columnsLanes = {
@@ -209,16 +210,17 @@ public class DataSource {
         int idTitle = cursor.getColumnIndex(DBHelper.GAME_TITLE);
         int idStart = cursor.getColumnIndex(DBHelper.GAME_START);
         int idEnd = cursor.getColumnIndex(DBHelper.GAME_END);
-
+        int idActPlayer = cursor.getColumnIndex(DBHelper.GAME_ACTPLAYER);
 
         long index = cursor.getLong(idIndex);
         String title = cursor.getString(idTitle);
         long start = cursor.getLong(idStart);
         long end = cursor.getLong(idEnd);
-
+        int posActPlayer = cursor.getInt(idActPlayer);
 
         Game game = new Game(index, title, start, end);
 
+        game.setActualPlayer(posActPlayer);
         game.setDataSource(this);
 
         return game;
@@ -231,6 +233,7 @@ public class DataSource {
         values.put(DBHelper.GAME_TITLE, title);
         values.put(DBHelper.GAME_START, start);
         values.put(DBHelper.GAME_END, end);
+        values.put(DBHelper.GAME_ACTPLAYER, 0);
 
         open();
 
@@ -269,7 +272,7 @@ public class DataSource {
 
 
         game.setPlayers(getGamePlayers(game));
-        game.setActualPlayer(getGameActualPlayer(game));
+
 
         game.setLanes(getGameLanes(game));
 
@@ -291,7 +294,7 @@ public class DataSource {
         values.put(DBHelper.GAME_TITLE, game.getTitle());
         values.put(DBHelper.GAME_START, game.getStartTime());
         values.put(DBHelper.GAME_END, game.getEndTime());
-
+        values.put(DBHelper.GAME_ACTPLAYER, game.getActualPlayer());
 
         open();
 
@@ -403,15 +406,43 @@ public class DataSource {
      */
 
 
+//    public int setPosActPlayer(Game game){
+//        int idToken, count, token;
+//
+//        open();
+//
+//        Cursor cursor = db.query(DBHelper.TBL_PLAYERS, columnsGamePlayers,
+//                DBHelper.PLAYERS_GAME_ID + " = " + game.getId(), null, null, null, null);
+//
+//
+//        idToken = cursor.getColumnIndex(DBHelper.PLAYERS_TOKEN);
+//        count = 0;
+//
+//        cursor.moveToFirst();
+//
+//        while(!cursor.isAfterLast()){
+//            if(count == game.getActualPlayer()) {
+//
+//            }
+//            cursor.moveToNext();
+//        }
+//
+//
+//        cursor.close();
+//        close();
+//
+//        return 0;
+//    }
+
     public List<Player> getGamePlayers(Game game) {
 
         List<Player> players = new ArrayList<>();
-        int idPlayer;
+        int idPlayer, idToken, token;
 
         Player player;
         long id;
 
-        int count;
+//        int count;
 
         open();
 
@@ -420,9 +451,11 @@ public class DataSource {
 
 
         idPlayer = cursor.getColumnIndex(DBHelper.PLAYERS_PLAYER_ID);
-
+//        idToken = cursor.getColumnIndex(DBHelper.PLAYERS_TOKEN);
 
         cursor.moveToFirst();
+
+//        count = 0;
 
         while (!cursor.isAfterLast()) {
             id = cursor.getLong(idPlayer);
@@ -433,7 +466,12 @@ public class DataSource {
 
             players.add(player);
 
+//            token = cursor.getInt(idToken);
+//            if(token != 0){
+//                game.setActualPlayer(count);
+//            }
 
+//            count++;
             cursor.moveToNext();
         }
 
@@ -477,32 +515,32 @@ public class DataSource {
 
     }
 
-    public int getGameActualPlayer(Game game) {
-
-        int playerID = 0;
-
-        open();
-
-        Cursor cursor = db.query(DBHelper.TBL_PLAYERS, new String[]{DBHelper.PLAYERS_PLAYER_ID},
-                DBHelper.PLAYERS_GAME_ID + " = " + game.getId() + " AND " +
-                        DBHelper.PLAYERS_TOKEN + " = 1",
-                null, null, null, null);
-
-
-        cursor.moveToFirst();
-        int idID = cursor.getColumnIndex(DBHelper.PLAYERS_PLAYER_ID);
-
-        if (!cursor.isAfterLast()) {
-            playerID = cursor.getInt(0);
-        }
-
-        cursor.close();
-        close();
-
-        Log.d(TAG, "getGameActualPlayer: " + playerID + " wurde geladen");
-
-        return playerID;
-    }
+//    public int getGameActualPlayer(Game game) {
+//
+//        int playerID = 0;
+//
+//        open();
+//
+//        Cursor cursor = db.query(DBHelper.TBL_PLAYERS, new String[]{DBHelper.PLAYERS_PLAYER_ID},
+//                DBHelper.PLAYERS_GAME_ID + " = " + game.getId() + " AND " +
+//                        DBHelper.PLAYERS_TOKEN + " = 1",
+//                null, null, null, null);
+//
+//
+//        cursor.moveToFirst();
+//        int idID = cursor.getColumnIndex(DBHelper.PLAYERS_PLAYER_ID);
+//
+//        if (!cursor.isAfterLast()) {
+//            playerID = cursor.getInt(0);
+//        }
+//
+//        cursor.close();
+//        close();
+//
+//        Log.d(TAG, "getGameActualPlayer: " + playerID + " wurde geladen");
+//
+//        return playerID;
+//    }
 
     private void loadGamePlayerTileSet(Game game, Player player) {
 
