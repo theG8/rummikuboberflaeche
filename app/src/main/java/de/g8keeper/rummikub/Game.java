@@ -18,6 +18,10 @@ public class Game implements Parcelable {
     public static final int STATE_RUNNING = 1;
     public static final int STATE_FINISH = 2;
 
+    public static final int MOVE_RESULT_INVALID = 0;
+    public static final int MOVE_RESULT_VALID = 1;
+    public static final int MOVE_RESULT_WIN = 2;
+
     public static final int START_TILE_COUNT = 14;
 
     public static final Parcelable.Creator<Game> CREATOR =
@@ -46,12 +50,8 @@ public class Game implements Parcelable {
     private TilePool mPool;
     private int mPosActPlayer;
 
+
     private DataSource mDataSource;
-
-
-
-
-
 
 
     public Game(long id, String title) {
@@ -88,7 +88,7 @@ public class Game implements Parcelable {
 
     }
 
-    public void setDataSource(DataSource dataSource){
+    public void setDataSource(DataSource dataSource) {
         this.mDataSource = dataSource;
     }
 
@@ -111,6 +111,12 @@ public class Game implements Parcelable {
                 }
             }
         }
+    }
+
+
+    //TODO remove!
+    public void setmStartTime(){
+        mStartTime = 1;
     }
 
 
@@ -155,7 +161,7 @@ public class Game implements Parcelable {
     public void addPlayer(Player player) {
         Log.d(TAG, "addPlayer: " + player);
 
-        if(state() == STATE_NOT_STARTED) {
+        if (state() == STATE_NOT_STARTED) {
             this.mPlayers.add(player);
 
             if (mDataSource != null) {
@@ -170,7 +176,7 @@ public class Game implements Parcelable {
         Log.d(TAG, "addLane: " + lane);
         this.mLanes.add(lane);
 
-        if(mDataSource != null) {
+        if (mDataSource != null) {
             mDataSource.addLaneToGame(this, lane, this.mLanes.indexOf(lane));
         }
     }
@@ -187,9 +193,10 @@ public class Game implements Parcelable {
 
     }
 
-    public int getActualPlayer(){
+    public int getActualPlayer() {
         return mPosActPlayer;
     }
+
     public void setActualPlayer(int pos) {
         mPosActPlayer = pos;
     }
@@ -215,8 +222,6 @@ public class Game implements Parcelable {
     }
 
 
-
-
     public int state() {
         int state = 0;
 
@@ -232,38 +237,39 @@ public class Game implements Parcelable {
 
     }
 
-    public Turn getTurn(){
+    public Move getNextMove() {
 
         List<Lane> lanes = new ArrayList<>();
         TileSet tileSet = new TileSet(mPlayers.get(mPosActPlayer).getTileSet());
 
-        for(Lane l : mLanes){
+        for (Lane l : mLanes) {
             lanes.add(new Lane(l));
         }
 
-        Turn turn = new Turn(tileSet, lanes);
+        Move move = new Move(tileSet, lanes);
 
 
-        return turn;
+        return move;
     }
 
 
+    private void saveGameState() {
 
-    private void saveGameState(){
+        Log.d("DEBUG", "saving gamestate\n");
 
         mDataSource.updateGame(this);
 
 
     }
 
-    public void startGame(){
-        if(state() == STATE_NOT_STARTED){
+    public void startGame() {
+        if (state() == STATE_NOT_STARTED) {
 
             mStartTime = 1;
             //
             buildPool();
 
-            for(int i = 0; i < START_TILE_COUNT; i++) {
+            for (int i = 0; i < START_TILE_COUNT; i++) {
                 for (Player player : mPlayers) {
                     player.getTileSet().addTile(mPool.getTile());
                 }
@@ -271,17 +277,101 @@ public class Game implements Parcelable {
             mPosActPlayer = 0;
 
             saveGameState();
-            Log.d(TAG, "startGame: " + toString(true));
+            Log.d("DEBUG", "startGame: " + toString(true));
 
-        } else if (state() == STATE_RUNNING){
+        } else if (state() == STATE_RUNNING) {
             throw new RuntimeException("game is running... startGame() is not allowed");
-        } else if (state() == STATE_FINISH){
+        } else if (state() == STATE_FINISH) {
             throw new RuntimeException("game is finished... startGame() is not allowed");
         }
     }
 
+    public int makeMove(Move move) {
+
+        StringBuilder sb = new StringBuilder("makeMove:\n\n");
+        boolean result = true;
+        boolean hasPlayedTiles = false;
+        int moveResult = MOVE_RESULT_INVALID;
+
+        //durch rückwärts-durchlaufen ist löschen von leeren lanes möglich
+        for(int i = move.lanes().size()-1; i>=0;i--){
+            if(move.lanes().get(i).isEmpty()){
+                move.lanes().remove(i);
+            } else {
+                if (move.lanes().get(i).verify()){
+                    sb.append(move.lanes().get(i) + " is valid\n");
+                } else {
+                    sb.append(move.lanes().get(i) + " IS NOT VALID\n");
+                    moveResult = MOVE_RESULT_INVALID;
+                    result = false;
+                }
+            }
+        }
 
 
+
+        sb.append("\n");
+
+        if(result) {
+
+            if (move.tileSet().equals(mPlayers.get(mPosActPlayer).getTileSet())) {
+                // player played no tile
+                hasPlayedTiles = false;
+
+                sb.append("player played NO tiles\n\n");
+            } else {
+                // player has played tile/s
+                hasPlayedTiles = true;
+                sb.append("player played tiles\n\n");
+            }
+
+
+        }
+
+        if(result){
+
+            sb.append("set lanes and tileset from move to game\n\n");
+            setLanes(move.lanes());
+            getPlayers().get(mPosActPlayer).setTileSet(move.tileSet());
+
+            if(!hasPlayedTiles){
+                // player gets new tile from pool
+                sb.append("player got a new tile\n\n");
+                getPlayers().get(mPosActPlayer).getTileSet().addTile(mPool.getTile());
+            }
+
+
+            if(getPlayers().get(mPosActPlayer).getTileSet().size() == 0){
+                sb.append("players tileset-size is 0... PLAYER WINS!\n\n");
+                moveResult = MOVE_RESULT_WIN;
+                mEndTime = 2;
+
+            } else {
+                sb.append("move was valid... set mPosActPlayer to next player\n\n");
+                moveResult = MOVE_RESULT_VALID;
+                mPosActPlayer = getNextPlayer();
+            }
+            sb.append("savinng game state\n\n");
+            saveGameState();
+        }
+
+
+        Log.d("DEBUG", sb.toString());
+
+        return moveResult;
+    }
+
+
+    private int getNextPlayer() {
+        if (mPosActPlayer < (mPlayers.size() - 1)) {
+            return mPosActPlayer + 1;
+        } else if (mPosActPlayer == (mPlayers.size() -1)){
+            return 0;
+        } else {
+            throw new RuntimeException();
+        }
+
+    }
 
     @NonNull
     @Override

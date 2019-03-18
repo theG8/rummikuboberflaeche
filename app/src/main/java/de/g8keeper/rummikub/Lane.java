@@ -170,6 +170,8 @@ public class Lane extends TileSet {
 
     }
 
+
+
     public boolean isSplitable() {
 
         return size() >= (Lane.MIN_TILES_TO_VERIFY * 2) ? true : false;

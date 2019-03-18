@@ -102,6 +102,10 @@ public class TileSet implements IEvaluable, Iterable<Tile>, Parcelable {
         return byteArray;
     }
 
+    public boolean isEmpty(){
+        return mTiles.size() == 0;
+    }
+
     public void addTile(Tile tile) {
 
         // add tile to mTiles

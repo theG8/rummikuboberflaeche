@@ -3,6 +3,7 @@ package de.g8keeper.rummikuboberflaeche;
 import android.content.DialogInterface;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.os.PersistableBundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,17 +16,20 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Space;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import de.g8keeper.rummikub.Color;
 import de.g8keeper.rummikub.Game;
 import de.g8keeper.rummikub.Lane;
+import de.g8keeper.rummikub.Move;
 import de.g8keeper.rummikub.Player;
 import de.g8keeper.rummikub.Tile;
 import de.g8keeper.rummikub.TilePool;
 import de.g8keeper.rummikub.TileSet;
-import de.g8keeper.rummikub.Turn;
 import de.g8keeper.rummikub.database.DataSource;
 
 
@@ -37,7 +41,7 @@ public class PlaygroundActivity extends AppCompatActivity {
     public static int draggedTileIndex = -1;
 
     private Game mGame;
-    private Turn mTurn;
+    private Move mMove;
 
     private FragmentTileSet fragTileSet;
 
@@ -52,6 +56,8 @@ public class PlaygroundActivity extends AppCompatActivity {
     private LinearLayout llTileSet;
     private TileSetView tileSetView;
 
+    private TextView tvPlayer;
+
     private DataSource mDataSource;
 
 
@@ -59,12 +65,13 @@ public class PlaygroundActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playground);
-
+        Log.d("DEBUG", "onCreate: ");
         mDataSource = new DataSource(this);
 
 //        long gameID = getIntent().getLongExtra("game",-1L);
 
         mGame = getIntent().getParcelableExtra("game");
+
 
         if (mGame != null) {
             mGame.setDataSource(mDataSource);
@@ -81,6 +88,8 @@ public class PlaygroundActivity extends AppCompatActivity {
         } else {
             finish();
         }
+
+        tvPlayer = findViewById(R.id.tv_playground_player);
 
         svVertical = findViewById(R.id.sv_vertical);
         svHorizontal = findViewById(R.id.sv_horizontal);
@@ -103,8 +112,21 @@ public class PlaygroundActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d("DEBUG", "onResume: ");
 
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("DEBUG", "onPause: ");
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        Log.d("DEBUG", "onSaveInstanceState: ");
     }
 
     private void setUpLanes() {
@@ -112,7 +134,14 @@ public class PlaygroundActivity extends AppCompatActivity {
         LaneView laneView;
 
 
-        for (Lane lane : mTurn.lanes()) {
+        // adding empty lane for dropping
+//        mMove.lanes().add(new Lane());
+
+        llPlayground.removeAllViews();
+
+        checkForOneEmptyLane();
+
+        for (Lane lane : mMove.lanes()) {
 
             laneView = new LaneView(this);
             laneView.setTileSet(lane);
@@ -120,27 +149,107 @@ public class PlaygroundActivity extends AppCompatActivity {
             Log.d(TAG, "setUpLanes: Added Lane: " + lane);
         }
 
-        //leerreihe
-        laneView = new LaneView(this);
-        llPlayground.addView(laneView);
-        Log.d(TAG, "setUpLanes: Added empty Lane");
+//        //leerreihe
+//        laneView = new LaneView(this);
+//
+//        llPlayground.addView(laneView);
+//        Log.d(TAG, "setUpLanes: Added empty Lane");
 
     }
 
     private void setUpTileSet() {
 
-        tileSetView.setTileSet(mTurn.tileSet());
+        tileSetView.setTileSet(mMove.tileSet());
 //        tileSetView.addView(tileSetView);
+    }
 
+    private void checkForOneEmptyLane() {
+        List<Integer> indexList = new ArrayList<>();
+
+
+        for (int i = 0; i < mMove.lanes().size(); i++) {
+            if (mMove.lanes().get(i).isEmpty()) {
+                indexList.add(i);
+            }
+        }
+
+        if (indexList.size() == 0) {
+            // add a empty lane
+            mMove.lanes().add(new Lane());
+        } else if (indexList.size() > 1) {
+            for (int i = 0; i < indexList.size() - 1; i++) {
+                mMove.lanes().remove(indexList.get(i));
+            }
+        }
 
     }
 
+    private void removeEmptyLanes() {
+        List<Integer> indexList = new ArrayList<>();
+
+
+        for (int i = 0; i < mMove.lanes().size(); i++) {
+            if (mMove.lanes().get(i).isEmpty()) {
+                indexList.add(i);
+            }
+        }
+
+
+        for (int i = 0; i < indexList.size(); i++) {
+            mMove.lanes().remove(indexList.get(i));
+        }
+
+    }
 
     private Space getSpace() {
         Space space = new Space(this);
-        space.setId(new Random().nextInt());
+
         space.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 25));
         return space;
+    }
+
+    private void startMove() {
+        mMove = mGame.getNextMove();
+
+        String playerName = mGame.getPlayers().get(mGame.getActualPlayer()).getName();
+
+        tvPlayer.setText(playerName);
+
+        setUpTileSet();
+        setUpLanes();
+    }
+
+
+    private void makeMove() {
+
+        Log.d("DEBUG", "try to make move (" + mMove + ") -> \n\n");
+
+        removeEmptyLanes();
+
+        int result = mGame.makeMove(mMove);
+
+        switch(result){
+            case Game.MOVE_RESULT_INVALID:
+
+                Toast.makeText(this, "Zug ist nicht gültig!", Toast.LENGTH_SHORT).show();
+
+                startMove();
+
+                break;
+            case Game.MOVE_RESULT_VALID:
+
+                Toast.makeText(this, "Zug ist gültig!", Toast.LENGTH_SHORT).show();
+
+                startMove();
+
+                break;
+            case Game.MOVE_RESULT_WIN:
+                Toast.makeText(this, "Du hast gewonnen", Toast.LENGTH_SHORT).show();
+                break;
+        }
+
+        Log.d("DEBUG", "move-result: " + result + " -> \n\n");
+
     }
 
     public void onClick(View view) {
@@ -155,93 +264,22 @@ public class PlaygroundActivity extends AppCompatActivity {
                 StringBuilder sb = new StringBuilder("GAMEDATA:\n\n");
                 sb.append(mGame.toString(true));
                 sb.append("\n\n");
-                sb.append(mTurn.toString());
+                sb.append(mMove.toString());
                 sb.append("\n\n");
 
-                Log.d("DEBUG",  sb.toString());
+                Log.d("DEBUG", sb.toString());
 
                 break;
 
             case R.id.fab_playground_button:
+
+                makeMove();
                 break;
         }
 
     }
 
 
-    private void testCode() {
-        // ******************************************************************************************
-        // Testcode:                                                                                *
-        // ******************************************************************************************
-
-
-        TilePool tilePool = new TilePool();
-        TileSet tiles = new TileSet();
-
-        for (int i = 0; i < 14; i++) {
-
-            tiles.addTile(tilePool.getTile());
-
-        }
-
-        fragTileSet = FragmentTileSet.newInstance(tiles);
-
-        getSupportFragmentManager().beginTransaction().
-                add(R.id.ll_tile_set, fragTileSet, "fragTileSet").
-                commit();
-
-
-        Lane lane = new Lane();
-
-        lane.addTile(new Tile(Color.RED, 10));
-        lane.addTile(new Tile(Color.RED, 3));
-        lane.addTile(new Tile(Color.RED, 8));
-        lane.addTile(new Tile(Color.RED, 2));
-        lane.addTile(new Tile(Color.RED, 1));
-        lane.addTile(new Tile(Color.RED, 5));
-        lane.addTile(new Tile(Color.RED, 7));
-
-        mFragmentLane = FragmentLane.newInstance(lane);
-
-
-        llPlayground.post(() -> {
-            getSupportFragmentManager().beginTransaction().
-                    add(R.id.ll_playground, mFragmentLane, "mFragmentLane").
-                    commit();
-
-        });
-
-        llPlayground.post(() -> {
-            llPlayground.addView(getSpace());
-
-        });
-
-
-        lane = new Lane();
-
-        lane.addTile(new Tile(Color.BLUE, 2));
-        lane.addTile(new Tile(Color.BLUE, 7));
-        lane.addTile(new Tile(Color.BLUE, 12));
-        lane.addTile(new Tile(Color.BLUE, 4));
-        lane.addTile(new Tile(Color.BLUE, 3));
-
-        lane.addTile(new Tile(Color.BLUE, 9));
-
-        mFragmentLane2 = FragmentLane.newInstance(lane);
-
-
-        llPlayground.post(() -> {
-            getSupportFragmentManager().beginTransaction().
-                    add(R.id.ll_playground, mFragmentLane2, "mFragmentLane2").
-                    commit();
-
-        });
-
-        llPlayground.post(() -> {
-            llPlayground.addView(getSpace());
-
-        });
-    }
 
 
     private AlertDialog createGameDialog() {
@@ -279,10 +317,7 @@ public class PlaygroundActivity extends AppCompatActivity {
 
                         }
 
-                        mTurn = mGame.getTurn();
-
-                        setUpTileSet();
-                        setUpLanes();
+                        startMove();
 
                     }
                 }).
@@ -297,6 +332,8 @@ public class PlaygroundActivity extends AppCompatActivity {
 
         return builder.create();
     }
+
+
 
     class ScrollOnDragListener implements View.OnDragListener {
         private final String TAG = ScrollOnDragListener.class.getSimpleName();

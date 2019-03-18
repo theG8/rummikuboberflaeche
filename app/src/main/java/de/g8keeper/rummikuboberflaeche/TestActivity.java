@@ -9,10 +9,9 @@ import java.util.List;
 
 import de.g8keeper.rummikub.Color;
 import de.g8keeper.rummikub.Game;
-import de.g8keeper.rummikub.Lane;
+import de.g8keeper.rummikub.Move;
 import de.g8keeper.rummikub.Player;
 import de.g8keeper.rummikub.Tile;
-import de.g8keeper.rummikub.Turn;
 import de.g8keeper.rummikub.database.DataSource;
 
 public class TestActivity extends AppCompatActivity {
@@ -96,15 +95,24 @@ public class TestActivity extends AppCompatActivity {
 
             case R.id.tGetTurn:
 
-                Turn turn = game.getTurn();
-                Log.d(TAG, "got turn " + turn + " from " + game + "...");
+                Move move = game.getNextMove();
+                Log.d(TAG, "got move " + move + " from " + game + "...");
 
-                turn.tileSet().removeTile(0);
-                Log.d(TAG, "removed tile1 form turn -> " + turn);
+                move.tileSet().removeTile(0);
+                Log.d(TAG, "removed tile1 form move -> " + move);
 
 
-                turn = game.getTurn();
-                Log.d(TAG, "got new turn " + turn + " from " + game);
+                move = game.getNextMove();
+                Log.d(TAG, "got new move " + move + " from " + game);
+
+
+                break;
+
+            case R.id.btn_testspiel:
+
+                dataSource.createTestspiel();
+
+
 
 
                 break;

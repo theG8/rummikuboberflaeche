@@ -9,9 +9,11 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.g8keeper.rummikub.Color;
 import de.g8keeper.rummikub.Game;
 import de.g8keeper.rummikub.Lane;
 import de.g8keeper.rummikub.Player;
+import de.g8keeper.rummikub.Tile;
 import de.g8keeper.rummikub.TileSet;
 
 public class DataSource {
@@ -626,6 +628,9 @@ public class DataSource {
 
         close();
 
+        //TODO ?!
+        addTileSetToPlayer(game,player);
+
 
     }
 
@@ -711,6 +716,68 @@ public class DataSource {
 
         str.append("************************************************\n\n");
         return str.toString();
+    }
+
+    public void createTestspiel(){
+
+        Log.d("DEBUG", dumpAllTables());
+
+        Game game = getGame(1);
+        game.setDataSource(this);
+
+        Player p1 = createPlayer("Seb");
+        Player p2 = createPlayer("Billy");
+
+
+        p1.getTileSet().addTile(new Tile(Color.RED,3));
+        p1.getTileSet().addTile(new Tile(Color.RED,4));
+        p1.getTileSet().addTile(new Tile(Color.RED,5));
+        p1.getTileSet().addTile(new Tile(Color.RED,6));
+
+        p1.getTileSet().addTile(new Tile(Color.BLUE,9));
+        p1.getTileSet().addTile(new Tile(Color.BLUE,10));
+        p1.getTileSet().addTile(new Tile(Color.BLUE,11));
+
+        p1.getTileSet().addTile(new Tile(Color.YELLOW,6));
+        p1.getTileSet().addTile(new Tile(Color.YELLOW,7));
+        p1.getTileSet().addTile(new Tile(Color.YELLOW,8));
+
+        p1.getTileSet().addTile(new Tile(Color.BLACK,1));
+        p1.getTileSet().addTile(new Tile(Color.BLACK,2));
+        p1.getTileSet().addTile(new Tile(Color.BLACK,12));
+        p1.getTileSet().addTile(new Tile(Color.BLACK,13));
+
+        p1.getTileSet().addTile(new Tile(true));
+
+        game.addPlayer(p1);
+
+        p2.getTileSet().addTile(new Tile());
+        p2.getTileSet().addTile(new Tile());
+        p2.getTileSet().addTile(new Tile());
+        p2.getTileSet().addTile(new Tile());
+        p2.getTileSet().addTile(new Tile());
+        p2.getTileSet().addTile(new Tile());
+        p2.getTileSet().addTile(new Tile());
+        p2.getTileSet().addTile(new Tile());
+        p2.getTileSet().addTile(new Tile());
+        p2.getTileSet().addTile(new Tile());
+
+        game.addPlayer(p2);
+
+        Lane lane = new Lane();
+
+        lane.addTile(new Tile(Color.YELLOW,3));
+        lane.addTile(new Tile(Color.YELLOW,4));
+        lane.addTile(new Tile(Color.YELLOW,5));
+
+        game.getLanes().add(lane);
+
+        game.setmStartTime();
+        updateGame(game);
+
+
+        Log.d("DEBUG", dumpAllTables());
+
     }
 
 }
