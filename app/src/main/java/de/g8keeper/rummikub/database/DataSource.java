@@ -460,9 +460,9 @@ public class DataSource {
         int idTiles = cursor.getColumnIndex(DBHelper.LANES_TILES);
 
         cursor.moveToFirst();
-
+        int id = cursor.getColumnIndex(DBHelper.LANES_TILES);
         while (!cursor.isAfterLast()) {
-            lane = new Lane(cursor.getBlob(idTiles));
+            lane = new Lane(cursor.getBlob(id));
 
             lanes.add(lane);
 
@@ -490,9 +490,10 @@ public class DataSource {
 
 
         cursor.moveToFirst();
+        int idID = cursor.getColumnIndex(DBHelper.PLAYERS_PLAYER_ID);
 
         if (!cursor.isAfterLast()) {
-            playerID = cursor.getInt(1);
+            playerID = cursor.getInt(0);
         }
 
         cursor.close();
@@ -516,9 +517,12 @@ public class DataSource {
         cursor.moveToFirst();
 
         TileSet tileSet;
+        Log.d(TAG, "loadGamePlayerTileSet: cursor.count: " + cursor.getCount());
+
+        int id = cursor.getColumnIndex(DBHelper.TILESETS_TILES);
 
         if (!cursor.isAfterLast()) {
-            tileSet = new TileSet(cursor.getBlob(1));
+            tileSet = new TileSet(cursor.getBlob(id));
             player.setTileSet(tileSet);
             Log.d(TAG, "loadGamePlayerTileSet: " + tileSet + " wurde an " + player + " angehängt");
         } else {
@@ -586,4 +590,89 @@ public class DataSource {
 
 
     }
+
+    /***********************************************************************************************
+     *
+     */
+
+
+    public String dumpAllTables(){
+        StringBuilder str = new StringBuilder();
+
+        str.append(dumpTable(DBHelper.TBL_PLAYER));
+        str.append(dumpTable(DBHelper.TBL_GAME));
+        str.append(dumpTable(DBHelper.TBL_PLAYERS));
+        str.append(dumpTable(DBHelper.TBL_TILESETS));
+        str.append(dumpTable(DBHelper.TBL_LANES));
+
+        return str.toString();
+
+    }
+
+
+
+    public String dumpTable(String table){
+        StringBuilder str = new StringBuilder();
+
+        String[] columns= new String[0];
+        switch(table){
+            case DBHelper.TBL_GAME:
+                columns = columnsGame;
+                break;
+            case DBHelper.TBL_PLAYER:
+                columns = columnsPlayer;
+                break;
+            case DBHelper.TBL_PLAYERS:
+                columns = columnsGamePlayers;
+                break;
+            case DBHelper.TBL_LANES:
+                columns = columnsLanes;
+                break;
+            case DBHelper.TBL_TILESETS:
+                columns = columnsTileSets;
+                break;
+        }
+
+
+        open();
+
+        Cursor cursor = db.query(table,
+                columns,"",
+                null, null, null, null);
+
+
+        str.append("Dump of " + table + ":\n");
+
+
+        int rows = cursor.getCount();
+        int cols = cursor.getColumnCount();
+
+        cursor.moveToFirst();
+
+        if(!cursor.isAfterLast()) {
+            for (int r = 0; r < rows; r++) {
+                cursor.moveToPosition(r);
+                str.append(r + ":\t");
+                for (int c = 0; c < cols; c++) { // <- c++.... hehe B)
+                    if(cursor.getType(c) != Cursor.FIELD_TYPE_BLOB) {
+                        str.append(cursor.getString(c) + "\t");
+                    } else {
+                        TileSet ts = new TileSet(cursor.getBlob(c));
+                        str.append(ts.toString() + "\t");
+                    }
+                }
+                str.append("\n");
+
+            }
+        } else {
+            str.append(" table is empty!\n");
+        }
+
+        cursor.close();
+        close();
+
+        str.append("************************************************\n\n");
+        return str.toString();
+    }
+
 }

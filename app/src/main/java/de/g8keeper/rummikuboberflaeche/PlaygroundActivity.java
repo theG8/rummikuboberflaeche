@@ -66,12 +66,12 @@ public class PlaygroundActivity extends AppCompatActivity {
 
         mGame = getIntent().getParcelableExtra("game");
 
-        if(mGame != null){
+        if (mGame != null) {
             mGame.setDataSource(mDataSource);
 
             Log.d(TAG, "onCreate: " + mGame.toString(true));
 
-            for(Player player :mGame.getPlayers()){
+            for (Player player : mGame.getPlayers()) {
                 Log.d(TAG, "\t" + player.toStringWithTiles());
             }
 
@@ -105,16 +105,14 @@ public class PlaygroundActivity extends AppCompatActivity {
         super.onResume();
 
 
-
     }
 
-    private void setUpLanes(){
+    private void setUpLanes() {
 
         LaneView laneView;
 
 
-
-        for(Lane lane: mTurn.lanes()){
+        for (Lane lane : mTurn.lanes()) {
 
             laneView = new LaneView(this);
             laneView.setTileSet(lane);
@@ -129,14 +127,13 @@ public class PlaygroundActivity extends AppCompatActivity {
 
     }
 
-    private void setUpTileSet(){
+    private void setUpTileSet() {
 
         tileSetView.setTileSet(mTurn.tileSet());
 //        tileSetView.addView(tileSetView);
 
 
     }
-
 
 
     private Space getSpace() {
@@ -147,18 +144,32 @@ public class PlaygroundActivity extends AppCompatActivity {
     }
 
     public void onClick(View view) {
-        switch(view.getId()){
-            case R.id.fab_playground_button:
+        switch (view.getId()) {
+            case R.id.btn_dump:
 
-                Log.d(TAG, "Turn: " + mTurn);
+                String str = mDataSource.dumpAllTables();
+                Log.d("DEBUG", "DUMP:\n\n" + str);
+                break;
+
+            case R.id.btn_gamedata:
+                StringBuilder sb = new StringBuilder("GAMEDATA:\n\n");
+                sb.append(mGame.toString(true));
+                sb.append("\n\n");
+                sb.append(mTurn.toString());
+                sb.append("\n\n");
+
+                Log.d("DEBUG",  sb.toString());
+
+                break;
+
+            case R.id.fab_playground_button:
                 break;
         }
 
     }
 
 
-
-    private void testCode(){
+    private void testCode() {
         // ******************************************************************************************
         // Testcode:                                                                                *
         // ******************************************************************************************
@@ -180,16 +191,15 @@ public class PlaygroundActivity extends AppCompatActivity {
                 commit();
 
 
-
         Lane lane = new Lane();
 
-        lane.addTile(new Tile(Color.RED,10));
-        lane.addTile(new Tile(Color.RED,3));
-        lane.addTile(new Tile(Color.RED,8));
-        lane.addTile(new Tile(Color.RED,2));
-        lane.addTile(new Tile(Color.RED,1));
-        lane.addTile(new Tile(Color.RED,5));
-        lane.addTile(new Tile(Color.RED,7));
+        lane.addTile(new Tile(Color.RED, 10));
+        lane.addTile(new Tile(Color.RED, 3));
+        lane.addTile(new Tile(Color.RED, 8));
+        lane.addTile(new Tile(Color.RED, 2));
+        lane.addTile(new Tile(Color.RED, 1));
+        lane.addTile(new Tile(Color.RED, 5));
+        lane.addTile(new Tile(Color.RED, 7));
 
         mFragmentLane = FragmentLane.newInstance(lane);
 
@@ -209,13 +219,13 @@ public class PlaygroundActivity extends AppCompatActivity {
 
         lane = new Lane();
 
-        lane.addTile(new Tile(Color.BLUE,2));
-        lane.addTile(new Tile(Color.BLUE,7));
-        lane.addTile(new Tile(Color.BLUE,12));
-        lane.addTile(new Tile(Color.BLUE,4));
-        lane.addTile(new Tile(Color.BLUE,3));
+        lane.addTile(new Tile(Color.BLUE, 2));
+        lane.addTile(new Tile(Color.BLUE, 7));
+        lane.addTile(new Tile(Color.BLUE, 12));
+        lane.addTile(new Tile(Color.BLUE, 4));
+        lane.addTile(new Tile(Color.BLUE, 3));
 
-        lane.addTile(new Tile(Color.BLUE,9));
+        lane.addTile(new Tile(Color.BLUE, 9));
 
         mFragmentLane2 = FragmentLane.newInstance(lane);
 
@@ -246,16 +256,16 @@ public class PlaygroundActivity extends AppCompatActivity {
 
         tvPlayers.setText("");
         int i = 1;
-        for(Player player: mGame.getPlayers()){
-            tvPlayers.append(i++ + ":\t" +player.getName() + ",\n");
+        for (Player player : mGame.getPlayers()) {
+            tvPlayers.append(i++ + ":\t" + player.getName() + ",\n");
         }
 
 
         String positiveText = "";
 
-        if (mGame.state() == Game.STATE_NOT_STARTED){
+        if (mGame.state() == Game.STATE_NOT_STARTED) {
             positiveText = "Spiel starten";
-        } else if (mGame.state() == Game.STATE_RUNNING){
+        } else if (mGame.state() == Game.STATE_RUNNING) {
             positiveText = "weiterspielen";
         }
 
@@ -264,7 +274,7 @@ public class PlaygroundActivity extends AppCompatActivity {
                 .setPositiveButton(positiveText, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if(mGame.state() == Game.STATE_NOT_STARTED) {
+                        if (mGame.state() == Game.STATE_NOT_STARTED) {
                             mGame.startGame();
 
                         }

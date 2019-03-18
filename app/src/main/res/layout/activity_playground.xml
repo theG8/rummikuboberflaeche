@@ -14,7 +14,7 @@
         android:layout_height="0dp"
         android:layout_marginBottom="8dp"
         android:fillViewport="true"
-        app:layout_constraintBottom_toTopOf="@+id/sv_tile_set"
+        app:layout_constraintBottom_toTopOf="@+id/fab_playground_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -71,4 +71,26 @@
         app:layout_constraintBottom_toTopOf="@+id/sv_tile_set"
         app:layout_constraintEnd_toEndOf="@+id/sv_vertical"
         app:layout_constraintStart_toStartOf="@+id/sv_vertical" />
+
+    <Button
+        android:id="@+id/btn_dump"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:onClick="onClick"
+        android:text="DUMP"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/fab_playground_button" />
+
+    <Button
+        android:id="@+id/btn_gamedata"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:onClick="onClick"
+        android:text="GameData"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/fab_playground_button" />
 </android.support.constraint.ConstraintLayout>

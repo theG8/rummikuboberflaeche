@@ -44,7 +44,7 @@ public class Game implements Parcelable {
     private List<Player> mPlayers;
     private List<Lane> mLanes;
     private TilePool mPool;
-    private int mIDActualPlayer;
+    private int mPosActPlayer;
 
     private DataSource mDataSource;
 
@@ -82,7 +82,7 @@ public class Game implements Parcelable {
         parcel.readTypedList(mLanes, Lane.CREATOR);
 
 
-        this.mIDActualPlayer = parcel.readInt();
+        this.mPosActPlayer = parcel.readInt();
 
         buildPool();
 
@@ -187,14 +187,17 @@ public class Game implements Parcelable {
 
     }
 
-    public void setActualPlayer(int id) {
-        mIDActualPlayer = id;
+    public int getActualPlayer(){
+        return mPosActPlayer;
+    }
+    public void setActualPlayer(int pos) {
+        mPosActPlayer = pos;
     }
 
 //    public void loadGameData() {
 //        mPlayers = mDataSource.getGamePlayers(this);
 //
-//        mIDActualPlayer = mDataSource.getGameActualPlayer(this);
+//        mPosActPlayer = mDataSource.getGameActualPlayer(this);
 //
 //        mLanes = mDataSource.getGameLanes(this);
 //
@@ -232,7 +235,7 @@ public class Game implements Parcelable {
     public Turn getTurn(){
 
         List<Lane> lanes = new ArrayList<>();
-        TileSet tileSet = new TileSet(mPlayers.get(mIDActualPlayer).getTileSet());
+        TileSet tileSet = new TileSet(mPlayers.get(mPosActPlayer).getTileSet());
 
         for(Lane l : mLanes){
             lanes.add(new Lane(l));
@@ -265,6 +268,7 @@ public class Game implements Parcelable {
                     player.getTileSet().addTile(mPool.getTile());
                 }
             }
+            mPosActPlayer = 0;
 
             saveGameState();
             Log.d(TAG, "startGame: " + toString(true));
@@ -287,8 +291,8 @@ public class Game implements Parcelable {
 
     public String toString(boolean b) {
 
-        return "game(" + this.mID + ", " + this.mTitle + ", " +
-                this.mStartTime + ", " + this.mEndTime + ", state: " + this.state() + ", " +
+        return "game(ID: " + this.mID + ", title: " + this.mTitle + ", start: " +
+                this.mStartTime + ", end: " + this.mEndTime + ", actPlayer: " + this.mPosActPlayer + ", state: " + this.state() + ", " +
                 "players: " + this.mPlayers + "\nLanes: " + this.mLanes + ")";
     }
 
@@ -307,7 +311,7 @@ public class Game implements Parcelable {
         dest.writeTypedList(mPlayers);
         dest.writeTypedList(mLanes);
 
-        dest.writeInt(mIDActualPlayer);
+        dest.writeInt(mPosActPlayer);
 
 
     }
