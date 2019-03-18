@@ -1,25 +1,32 @@
 package de.g8keeper.rummikuboberflaeche;
 
+import android.content.DialogInterface;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.DragEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Space;
+import android.widget.TextView;
 
 import java.util.Random;
 
 import de.g8keeper.rummikub.Color;
 import de.g8keeper.rummikub.Game;
 import de.g8keeper.rummikub.Lane;
+import de.g8keeper.rummikub.Player;
 import de.g8keeper.rummikub.Tile;
 import de.g8keeper.rummikub.TilePool;
 import de.g8keeper.rummikub.TileSet;
+import de.g8keeper.rummikub.Turn;
+import de.g8keeper.rummikub.database.DataSource;
 
 
 public class PlaygroundActivity extends AppCompatActivity {
@@ -30,20 +37,22 @@ public class PlaygroundActivity extends AppCompatActivity {
     public static int draggedTileIndex = -1;
 
     private Game mGame;
+    private Turn mTurn;
 
     private FragmentTileSet fragTileSet;
 
-    private FragmentLane fragmentLane;
-    private FragmentLane fragmentLane2;
-    private LinearLayout llTileSet;
-    private LinearLayout llPlayground;
+    private FragmentLane mFragmentLane;
+    private FragmentLane mFragmentLane2;
+
     private ScrollView svVertical;
     private HorizontalScrollView svHorizontal;
-    private HorizontalScrollView scTileSet;
+    private LinearLayout llPlayground;
 
+    private HorizontalScrollView svTileSet;
+    private LinearLayout llTileSet;
+    private TileSetView tileSetView;
 
-
-
+    private DataSource mDataSource;
 
 
     @Override
@@ -51,15 +60,31 @@ public class PlaygroundActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playground);
 
+        mDataSource = new DataSource(this);
+
 //        long gameID = getIntent().getLongExtra("game",-1L);
 
         mGame = getIntent().getParcelableExtra("game");
 
+        if(mGame != null){
+            mGame.setDataSource(mDataSource);
 
+            Log.d(TAG, "onCreate: " + mGame.toString(true));
+
+            for(Player player :mGame.getPlayers()){
+                Log.d(TAG, "\t" + player.toStringWithTiles());
+            }
+
+            AlertDialog dialogAdd = createGameDialog();
+            dialogAdd.show();
+
+        } else {
+            finish();
+        }
 
         svVertical = findViewById(R.id.sv_vertical);
         svHorizontal = findViewById(R.id.sv_horizontal);
-        scTileSet = findViewById(R.id.sv_tile_set);
+        svTileSet = findViewById(R.id.sv_tile_set);
         llTileSet = findViewById(R.id.ll_tile_set);
 
         llPlayground = findViewById(R.id.ll_playground);
@@ -67,16 +92,71 @@ public class PlaygroundActivity extends AppCompatActivity {
         llPlayground.setOnDragListener(new ScrollOnDragListener());
 
 
-        if(mGame != null){
-            Log.d(TAG, "onCreate: Parcelable kam an!\n" + mGame.toString(true));
-        } else {
-            Log.d(TAG, "onCreate: Parcelable kam NICHT an!");
-        }
-
+        tileSetView = new TileSetView(this);
+        llTileSet.addView(tileSetView);
+        tileSetView.setOnDragListener(new TileOnDragListener(tileSetView));
 
 
 //        testCode();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+
+
+    }
+
+    private void setUpLanes(){
+
+        LaneView laneView;
+
+
+
+        for(Lane lane: mTurn.lanes()){
+
+            laneView = new LaneView(this);
+            laneView.setTileSet(lane);
+            llPlayground.addView(laneView);
+            Log.d(TAG, "setUpLanes: Added Lane: " + lane);
+        }
+
+        //leerreihe
+        laneView = new LaneView(this);
+        llPlayground.addView(laneView);
+        Log.d(TAG, "setUpLanes: Added empty Lane");
+
+    }
+
+    private void setUpTileSet(){
+
+        tileSetView.setTileSet(mTurn.tileSet());
+//        tileSetView.addView(tileSetView);
+
+
+    }
+
+
+
+    private Space getSpace() {
+        Space space = new Space(this);
+        space.setId(new Random().nextInt());
+        space.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 25));
+        return space;
+    }
+
+    public void onClick(View view) {
+        switch(view.getId()){
+            case R.id.fab_playground_button:
+
+                Log.d(TAG, "Turn: " + mTurn);
+                break;
+        }
+
+    }
+
+
 
     private void testCode(){
         // ******************************************************************************************
@@ -111,12 +191,12 @@ public class PlaygroundActivity extends AppCompatActivity {
         lane.addTile(new Tile(Color.RED,5));
         lane.addTile(new Tile(Color.RED,7));
 
-        fragmentLane = FragmentLane.newInstance(lane);
+        mFragmentLane = FragmentLane.newInstance(lane);
 
 
         llPlayground.post(() -> {
             getSupportFragmentManager().beginTransaction().
-                    add(R.id.ll_playground, fragmentLane, "fragmentLane").
+                    add(R.id.ll_playground, mFragmentLane, "mFragmentLane").
                     commit();
 
         });
@@ -137,12 +217,12 @@ public class PlaygroundActivity extends AppCompatActivity {
 
         lane.addTile(new Tile(Color.BLUE,9));
 
-        fragmentLane2 = FragmentLane.newInstance(lane);
+        mFragmentLane2 = FragmentLane.newInstance(lane);
 
 
         llPlayground.post(() -> {
             getSupportFragmentManager().beginTransaction().
-                    add(R.id.ll_playground, fragmentLane2, "fragmentLane2").
+                    add(R.id.ll_playground, mFragmentLane2, "mFragmentLane2").
                     commit();
 
         });
@@ -154,19 +234,59 @@ public class PlaygroundActivity extends AppCompatActivity {
     }
 
 
-    private Space getSpace() {
-        Space space = new Space(this);
-        space.setId(new Random().nextInt());
-        space.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 25));
-        return space;
+    private AlertDialog createGameDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+
+        View view = inflater.inflate(R.layout.dialog_game_main, null);
+
+
+        final TextView tvPlayers = view.findViewById(R.id.dlg_game_tv_players);
+
+        tvPlayers.setText("");
+        int i = 1;
+        for(Player player: mGame.getPlayers()){
+            tvPlayers.append(i++ + ":\t" +player.getName() + ",\n");
+        }
+
+
+        String positiveText = "";
+
+        if (mGame.state() == Game.STATE_NOT_STARTED){
+            positiveText = "Spiel starten";
+        } else if (mGame.state() == Game.STATE_RUNNING){
+            positiveText = "weiterspielen";
+        }
+
+        builder.setView(view).
+                setTitle(mGame.getTitle())
+                .setPositiveButton(positiveText, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(mGame.state() == Game.STATE_NOT_STARTED) {
+                            mGame.startGame();
+
+                        }
+
+                        mTurn = mGame.getTurn();
+
+                        setUpTileSet();
+                        setUpLanes();
+
+                    }
+                }).
+                setNegativeButton("Zurück", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                        finish();
+                    }
+                });
+
+
+        return builder.create();
     }
-
-    public void onClick(View view) {
-
-
-
-    }
-
 
     class ScrollOnDragListener implements View.OnDragListener {
         private final String TAG = ScrollOnDragListener.class.getSimpleName();

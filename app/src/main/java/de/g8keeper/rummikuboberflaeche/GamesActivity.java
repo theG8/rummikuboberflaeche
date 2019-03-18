@@ -75,7 +75,7 @@ public class GamesActivity extends AppCompatActivity {
 
 
                     Intent intent = new Intent(getBaseContext(), PlayersActivity.class);
-
+                    Log.d(TAG, "vor putExtra: " + game);
                     intent.putExtra("game", game);
 
                     startActivity(intent);
@@ -95,8 +95,7 @@ public class GamesActivity extends AppCompatActivity {
     protected void onResume() {
 
         super.onResume();
-        Log.d(TAG, "Datenquelle wird geöffnet");
-        mDataSource.open();
+
 
         showAllEntries();
 
@@ -107,8 +106,6 @@ public class GamesActivity extends AppCompatActivity {
     protected void onPause() {
 
         super.onPause();
-        Log.d(TAG, "Datenquelle wird geschlossen");
-        mDataSource.close();
 
     }
 

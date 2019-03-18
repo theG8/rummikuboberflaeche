@@ -53,15 +53,19 @@ public class PlayersActivity extends AppCompatActivity {
 
         mGame = getIntent().getParcelableExtra("game");
 
+        mDataSource = new DataSource(this);
+
         if (mGame != null) {
-            mGame.setDataSource(new DataSource(this));
+            Log.d(TAG, "onCreate: " + mGame + " wurde übergeben");
+            mGame.setDataSource(mDataSource);
             mSelectPlayersMode = true;
         } else {
+            Log.d(TAG, "onCreate: PlayersActivity wurde ohne game im intent geladen");
             mSelectPlayersMode = false;
         }
 
 
-        mDataSource = new DataSource(this);
+
 
 
         FloatingActionButton btnPlay = findViewById(R.id.fab_players_play);
@@ -93,8 +97,8 @@ public class PlayersActivity extends AppCompatActivity {
     protected void onResume() {
 
         super.onResume();
-        Log.d(TAG, "Datenquelle wird geöffnet");
-        mDataSource.open();
+
+//        mDataSource.open();
 
         showAllEntries();
 
@@ -105,8 +109,8 @@ public class PlayersActivity extends AppCompatActivity {
     protected void onPause() {
 
         super.onPause();
-        Log.d(TAG, "Datenquelle wird geschlossen");
-        mDataSource.close();
+
+//        mDataSource.close();
 
     }
 
@@ -130,13 +134,13 @@ public class PlayersActivity extends AppCompatActivity {
 
                 if(players.size()>0){
                     for(Player p: players){
-                        mGame.addPlayer(p);
+                       mGame.addPlayer(p);
                     }
 
                     Intent intent = new Intent(this,PlaygroundActivity.class);
                     intent.putExtra("game", mGame);
                     startActivity(intent);
-
+                    finish();
                 }
 
                 break;

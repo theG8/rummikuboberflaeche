@@ -63,7 +63,7 @@
     </HorizontalScrollView>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_test"
+        android:id="@+id/fab_playground_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"

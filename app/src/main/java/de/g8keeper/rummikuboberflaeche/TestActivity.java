@@ -34,21 +34,21 @@ public class TestActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        dataSource.open();
+//        dataSource.open();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        dataSource.close();
+//        dataSource.close();
     }
 
     public void onClick(View view) {
 
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.tAddGame:
 
-                game = dataSource.createGame("Testspiel",-1,-1);
+                game = dataSource.createGame("Testspiel", -1, -1);
 
                 Log.d(TAG, "created game: " + game.toString());
 
@@ -57,6 +57,7 @@ public class TestActivity extends AppCompatActivity {
             case R.id.tGetGame:
 
                 game = dataSource.getGame(1);
+                game.setDataSource(dataSource);
 //                game.loadGameData();
 
                 Log.d(TAG, "got game: " + game.toString());
@@ -73,7 +74,7 @@ public class TestActivity extends AppCompatActivity {
 
                 Player player = dataSource.getPlayer(1);
 
-                game.addPlayer(player);
+                dataSource.addPlayerToGame(game, player);
 
                 Log.d(TAG, "added player " + player + " to " + game.toString());
                 break;
@@ -82,10 +83,10 @@ public class TestActivity extends AppCompatActivity {
 
                 List<Player> players = dataSource.getAllPlayers();
 
-                players.get(0).getTileSet().addTile(new Tile(Color.RED,3));
-                players.get(0).getTileSet().addTile(new Tile(Color.RED,12));
+                players.get(0).getTileSet().addTile(new Tile(Color.RED, 3));
+                players.get(0).getTileSet().addTile(new Tile(Color.RED, 12));
 
-                for(Player p:players){
+                for (Player p : players) {
                     game.addPlayer(p);
                 }
 
@@ -95,45 +96,43 @@ public class TestActivity extends AppCompatActivity {
 
             case R.id.tGetTurn:
 
-                Turn turn = game.getActualTurn();
+                Turn turn = game.getTurn();
                 Log.d(TAG, "got turn " + turn + " from " + game + "...");
 
                 turn.tileSet().removeTile(0);
                 Log.d(TAG, "removed tile1 form turn -> " + turn);
 
 
-                turn = game.getActualTurn();
-                Log.d(TAG, "got new turn " + turn + " from " + game );
+                turn = game.getTurn();
+                Log.d(TAG, "got new turn " + turn + " from " + game);
 
 
                 break;
 
-            case R.id.tAddLanes:
-
-                Lane lane;
-
-                lane = new Lane();
-
-                lane.addTile(new Tile(Color.BLACK,4));
-                lane.addTile(new Tile(Color.BLACK,5));
-                lane.addTile(new Tile(Color.BLACK,6));
-                lane.addTile(new Tile(Color.BLACK,7));
-
-                game.addLane(lane);
-
-                lane = new Lane();
-
-                lane.addTile(new Tile(Color.BLUE,9));
-                lane.addTile(new Tile(Color.BLUE,10));
-                lane.addTile(new Tile(Color.BLUE,11));
-                lane.addTile(new Tile(Color.BLUE,12));
-
-                game.addLane(lane);
-
-                break;
+//            case R.id.tAddLanes:
+//
+//                Lane lane;
+//
+//                lane = new Lane();
+//
+//                lane.addTile(new Tile(Color.BLACK, 4));
+//                lane.addTile(new Tile(Color.BLACK, 5));
+//                lane.addTile(new Tile(Color.BLACK, 6));
+//                lane.addTile(new Tile(Color.BLACK, 7));
+//
+//                game.addLane(lane);
+//
+//                lane = new Lane();
+//
+//                lane.addTile(new Tile(Color.BLUE, 9));
+//                lane.addTile(new Tile(Color.BLUE, 10));
+//                lane.addTile(new Tile(Color.BLUE, 11));
+//                lane.addTile(new Tile(Color.BLUE, 12));
+//
+//                game.addLane(lane);
+//
+//                break;
         }
-
-
 
 
     }

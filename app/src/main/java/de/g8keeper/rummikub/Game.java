@@ -5,7 +5,6 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,7 +16,9 @@ public class Game implements Parcelable {
 
     public static final int STATE_NOT_STARTED = 0;
     public static final int STATE_RUNNING = 1;
-    public static final int STATE_ENDED = 2;
+    public static final int STATE_FINISH = 2;
+
+    public static final int START_TILE_COUNT = 14;
 
     public static final Parcelable.Creator<Game> CREATOR =
             new Parcelable.Creator<Game>() {
@@ -45,7 +46,7 @@ public class Game implements Parcelable {
     private TilePool mPool;
     private int mIDActualPlayer;
 
-    private DataSource dataSource;
+    private DataSource mDataSource;
 
 
 
@@ -53,22 +54,23 @@ public class Game implements Parcelable {
 
 
 
-    public Game(long id, String title, DataSource dataSource) {
+    public Game(long id, String title) {
         this.mID = id;
         this.mTitle = title;
         this.mPlayers = new ArrayList<>();
         this.mLanes = new ArrayList<>();
 
-        this.dataSource = dataSource;
+
     }
 
-    public Game(long id, String title, long start, long end, DataSource dataSource) {
-        this(id, title, dataSource);
+    public Game(long id, String title, long start, long end) {
+        this(id, title);
         this.mStartTime = start;
         this.mEndTime = end;
     }
 
     public Game(Parcel parcel) {
+        this.mID = parcel.readLong();
         this.mTitle = parcel.readString();
         this.mStartTime = parcel.readLong();
         this.mEndTime = parcel.readLong();
@@ -79,6 +81,7 @@ public class Game implements Parcelable {
         parcel.readTypedList(mPlayers, Player.CREATOR);
         parcel.readTypedList(mLanes, Lane.CREATOR);
 
+
         this.mIDActualPlayer = parcel.readInt();
 
         buildPool();
@@ -86,7 +89,7 @@ public class Game implements Parcelable {
     }
 
     public void setDataSource(DataSource dataSource){
-        this.dataSource = dataSource;
+        this.mDataSource = dataSource;
     }
 
     public void buildPool() {
@@ -151,17 +154,25 @@ public class Game implements Parcelable {
 
     public void addPlayer(Player player) {
         Log.d(TAG, "addPlayer: " + player);
-        this.mPlayers.add(player);
 
-        dataSource.addPlayerToGame(this, player);
+        if(state() == STATE_NOT_STARTED) {
+            this.mPlayers.add(player);
+
+            if (mDataSource != null) {
+                mDataSource.addPlayerToGame(this, player);
+            }
+        } else {
+            throw new RuntimeException("game is running/finished... adding player is permitted");
+        }
     }
 
-    public void addLane(Lane lane) {
+    private void addLane(Lane lane) {
         Log.d(TAG, "addLane: " + lane);
         this.mLanes.add(lane);
 
-        dataSource.addLaneToGame(this, lane, this.mLanes.indexOf(lane));
-
+        if(mDataSource != null) {
+            mDataSource.addLaneToGame(this, lane, this.mLanes.indexOf(lane));
+        }
     }
 
     public void setPlayers(List<Player> players) {
@@ -180,40 +191,27 @@ public class Game implements Parcelable {
         mIDActualPlayer = id;
     }
 
-    public void loadGameData() {
-        mPlayers = dataSource.getGamePlayers(this);
-
-        mIDActualPlayer = dataSource.getGameActualPlayer(this);
-
-        mLanes = dataSource.getGameLanes(this);
-
-        buildPool();
-
-    }
-
-    public void saveGameData() {
-
-
-    }
+//    public void loadGameData() {
+//        mPlayers = mDataSource.getGamePlayers(this);
+//
+//        mIDActualPlayer = mDataSource.getGameActualPlayer(this);
+//
+//        mLanes = mDataSource.getGameLanes(this);
+//
+//        buildPool();
+//
+//    }
+//
+//    public void saveGameData() {
+//
+//
+//    }
 
     public boolean hasPlayers() {
         return mPlayers.size() != 0;
     }
 
-    public Turn getActualTurn() {
-        List<Lane> lanes = new ArrayList<>();
 
-        for (Lane l : this.mLanes) {
-            lanes.add(new Lane(l));
-        }
-
-        Turn turn = new Turn(
-                new TileSet(this.mPlayers.get(this.mIDActualPlayer).getTileSet()),
-                lanes
-        );
-
-        return turn;
-    }
 
 
     public int state() {
@@ -224,12 +222,60 @@ public class Game implements Parcelable {
         } else if (mStartTime != -1 && mEndTime == -1) {
             state = STATE_RUNNING;
         } else if (mStartTime != 1 && mEndTime != -1) {
-            state = STATE_ENDED;
+            state = STATE_FINISH;
         }
 
         return state;
 
     }
+
+    public Turn getTurn(){
+
+        List<Lane> lanes = new ArrayList<>();
+        TileSet tileSet = new TileSet(mPlayers.get(mIDActualPlayer).getTileSet());
+
+        for(Lane l : mLanes){
+            lanes.add(new Lane(l));
+        }
+
+        Turn turn = new Turn(tileSet, lanes);
+
+
+        return turn;
+    }
+
+
+
+    private void saveGameState(){
+
+        mDataSource.updateGame(this);
+
+
+    }
+
+    public void startGame(){
+        if(state() == STATE_NOT_STARTED){
+
+            mStartTime = 1;
+            //
+            buildPool();
+
+            for(int i = 0; i < START_TILE_COUNT; i++) {
+                for (Player player : mPlayers) {
+                    player.getTileSet().addTile(mPool.getTile());
+                }
+            }
+
+            saveGameState();
+            Log.d(TAG, "startGame: " + toString(true));
+
+        } else if (state() == STATE_RUNNING){
+            throw new RuntimeException("game is running... startGame() is not allowed");
+        } else if (state() == STATE_FINISH){
+            throw new RuntimeException("game is finished... startGame() is not allowed");
+        }
+    }
+
 
 
     @NonNull
@@ -253,6 +299,7 @@ public class Game implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(mID);
         dest.writeString(mTitle);
         dest.writeLong(mStartTime);
         dest.writeLong(mEndTime);

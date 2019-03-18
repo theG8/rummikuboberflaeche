@@ -33,7 +33,7 @@ public class TileOnDragListener implements View.OnDragListener {
 
     public TileOnDragListener(ITileDropTarget parentFragment) {
 
-        if (parentFragment instanceof FragmentTileSet) {
+        if (parentFragment instanceof FragmentTileSet || parentFragment instanceof TileSetView) {
             isTileSet = true;
         } else if (parentFragment instanceof FragmentLane) {
             isTileSet = false;

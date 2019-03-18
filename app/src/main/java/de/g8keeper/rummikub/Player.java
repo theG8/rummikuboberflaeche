@@ -30,7 +30,13 @@ public class Player implements Serializable, Parcelable {
     private TileSet mTileSet;
 
 
-
+    public Player(Parcel parcel){
+        this.mId = parcel.readLong();
+        this.mName = parcel.readString();
+        byte[] tileSet = new byte[parcel.readInt()];
+        parcel.readByteArray(tileSet);
+        this.mTileSet = new TileSet(tileSet);
+    }
 
 
     public Player(long id, String name) {
@@ -138,11 +144,5 @@ public class Player implements Serializable, Parcelable {
         dest.writeByteArray(mTileSet.toBytearray());
     }
 
-    public Player(Parcel parcel){
-        this.mId = parcel.readLong();
-        this.mName = parcel.readString();
-        byte[] tileSet = new byte[parcel.readInt()];
-        parcel.readByteArray(tileSet);
-        this.mTileSet = new TileSet(tileSet);
-    }
+
 }

@@ -87,7 +87,7 @@ public class PlayerAdapter extends ArrayAdapter<Player> {
             ivCheck.setVisibility(View.INVISIBLE);
         }
 
-        Log.d(TAG, "getView: tvName: " + tvName.getText());
+
 
         tvName.setText(mPlayers.get(position).getName());
         tvId.setText("ID: " + mPlayers.get(position).getId());
