@@ -43,10 +43,7 @@ public class PlaygroundActivity extends AppCompatActivity {
     private Game mGame;
     private Move mMove;
 
-    private FragmentTileSet fragTileSet;
 
-    private FragmentLane mFragmentLane;
-    private FragmentLane mFragmentLane2;
 
     private ScrollView svVertical;
     private HorizontalScrollView svHorizontal;

@@ -95,6 +95,8 @@ public class Game implements Parcelable {
 
     public void buildPool() {
 
+        //TODO joker-problem
+        // tile.equals(tile) does not work for joker
         mPool = new TilePool();
 
         if (mPlayers != null) {
