@@ -67,7 +67,7 @@ public class GamesActivity extends AppCompatActivity {
 
                     Intent intent = new Intent(getBaseContext(), PlaygroundActivity.class);
 
-                    intent.putExtra("game", game);
+                    intent.putExtra("gameID", game.getId());
 
                     startActivity(intent);
 

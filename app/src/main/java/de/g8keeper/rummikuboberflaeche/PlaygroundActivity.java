@@ -68,19 +68,23 @@ public class PlaygroundActivity extends AppCompatActivity {
         Log.d("DEBUG", "onCreate: ");
         mDataSource = new DataSource(this);
 
+        long gameID = getIntent().getLongExtra("gameID", -1);
+
 //        long gameID = getIntent().getLongExtra("game",-1L);
 
-        mGame = getIntent().getParcelableExtra("game");
+//        mGame = getIntent().getParcelableExtra("game");
 
 
-        if (mGame != null) {
+        if (gameID >= 0) {
+            mGame = mDataSource.getGame(gameID);
+
             mGame.setDataSource(mDataSource);
 
             Log.d(TAG, "onCreate: " + mGame.toString(true));
 
-            for (Player player : mGame.getPlayers()) {
-                Log.d(TAG, "\t" + player.toStringWithTiles());
-            }
+//            for (Player player : mGame.getPlayers()) {
+//                Log.d(TAG, "\t" + player.toStringWithTiles());
+//            }
 
             AlertDialog dialogAdd = createGameDialog();
             dialogAdd.show();

@@ -20,12 +20,12 @@ public class MainActivity extends AppCompatActivity {
 
         switch (view.getId()){
 
-            case R.id.btn_start_game:
-                intent = new Intent(this, PlaygroundActivity.class);
-                startActivity(intent);
-
-
-                break;
+//            case R.id.btn_start_game:
+//                intent = new Intent(this, PlaygroundActivity.class);
+//                startActivity(intent);
+//
+//
+//                break;
 
             case R.id.btn_configure_players:
 

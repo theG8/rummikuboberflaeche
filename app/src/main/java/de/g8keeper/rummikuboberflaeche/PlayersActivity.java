@@ -138,8 +138,11 @@ public class PlayersActivity extends AppCompatActivity {
                     }
 
                     Intent intent = new Intent(this,PlaygroundActivity.class);
-                    intent.putExtra("game", mGame);
+//                    intent.putExtra("game", mGame);
+
+                    intent.putExtra("gameID", mGame.getId());
                     startActivity(intent);
+
                     finish();
                 }
 

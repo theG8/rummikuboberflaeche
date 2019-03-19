@@ -22,12 +22,12 @@
     <color name="fab_red">@color/colorMainText</color>
 
     <!-- test-colors -->
-    <color name="test_background">#88FF0000</color>
+    <color name="test_background">#8827B600</color>
 
     <!-- tileSet-colors -->
     <color name="tile_set_background">#27FFFF00</color>
 
-    <color name="lane_background">#27FF0000</color>
+    <color name="lane_background">#272FFF00</color>
 
     <!-- tile-colors -->
     <color name="tile_background">#FFEFCD</color>
