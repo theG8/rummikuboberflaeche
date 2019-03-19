@@ -84,7 +84,7 @@ public class TileView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        int backgroundColor = getResources().getColor(R.color.tile_background, null);
+        int backgroundColor = ContextCompat.getColor(getContext(),R.color.tile_background);
         int textColor;
         String valueText;
 

@@ -110,9 +110,9 @@ public class TestActivity extends AppCompatActivity {
 
             case R.id.btn_testspiel:
 
-                dataSource.createTestspiel();
+//                dataSource.createTestspiel();
 
-
+                Log.d("DEBUG", dataSource.dumpAllTables());
 
 
                 break;

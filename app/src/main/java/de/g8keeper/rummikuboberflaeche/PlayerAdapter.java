@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,10 +79,13 @@ public class PlayerAdapter extends ArrayAdapter<Player> {
 
             ivCheck.setVisibility(View.VISIBLE);
             if (mCheckedStates[position]) {
-                ivCheck.setImageDrawable(getContext().getDrawable(android.R.drawable.checkbox_on_background));
-                //
+                // erst ab level 23
+                //                ivCheck.setImageDrawable(getContext().getDrawable(android.R.drawable.checkbox_on_background));
+                // für tablet
+                ivCheck.setImageDrawable(ContextCompat.getDrawable(getContext(),android.R.drawable.checkbox_on_background));
             } else {
-                ivCheck.setImageDrawable(getContext().getDrawable(android.R.drawable.checkbox_off_background));
+//                ivCheck.setImageDrawable(getContext().getDrawable(android.R.drawable.checkbox_off_background));
+                ivCheck.setImageDrawable(ContextCompat.getDrawable(getContext(),android.R.drawable.checkbox_off_background));
             }
         } else {
             ivCheck.setVisibility(View.INVISIBLE);

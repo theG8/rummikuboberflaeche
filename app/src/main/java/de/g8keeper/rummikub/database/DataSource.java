@@ -356,7 +356,6 @@ public class DataSource {
         long id = game.getId();
 
 
-
         deleteGameLanes(game);
         deleteGameTileSets(game);
         deleteGamePlayers(game);
@@ -549,9 +548,9 @@ public class DataSource {
         open();
 
         Cursor cursor = db.query(DBHelper.TBL_TILESETS, new String[]{DBHelper.TILESETS_TILES},
-                DBHelper.TILESETS_GAME_ID + " = " + game.getId() + " AND " +
-                        DBHelper.TILESETS_PLAYER_ID + " + " + player.getId(),
-                null, null, null, null);
+                DBHelper.TILESETS_GAME_ID + " = ? AND " + DBHelper.TILESETS_PLAYER_ID + " = ?",
+                new String[]{"" + game.getId(), "" + player.getId()}, null,
+                null, null, null);
 
 
         cursor.moveToFirst();
@@ -629,7 +628,7 @@ public class DataSource {
         close();
 
         //TODO ?!
-        addTileSetToPlayer(game,player);
+        //addTileSetToPlayer(game,player);
 
 
     }
@@ -639,7 +638,7 @@ public class DataSource {
      */
 
 
-    public String dumpAllTables(){
+    public String dumpAllTables() {
         StringBuilder str = new StringBuilder();
 
         str.append(dumpTable(DBHelper.TBL_PLAYER));
@@ -653,12 +652,11 @@ public class DataSource {
     }
 
 
-
-    public String dumpTable(String table){
+    public String dumpTable(String table) {
         StringBuilder str = new StringBuilder();
 
-        String[] columns= new String[0];
-        switch(table){
+        String[] columns = new String[0];
+        switch (table) {
             case DBHelper.TBL_GAME:
                 columns = columnsGame;
                 break;
@@ -680,7 +678,7 @@ public class DataSource {
         open();
 
         Cursor cursor = db.query(table,
-                columns,"",
+                columns, "",
                 null, null, null, null);
 
 
@@ -692,12 +690,12 @@ public class DataSource {
 
         cursor.moveToFirst();
 
-        if(!cursor.isAfterLast()) {
+        if (!cursor.isAfterLast()) {
             for (int r = 0; r < rows; r++) {
                 cursor.moveToPosition(r);
                 str.append(r + ":\t");
                 for (int c = 0; c < cols; c++) { // <- c++.... hehe B)
-                    if(cursor.getType(c) != Cursor.FIELD_TYPE_BLOB) {
+                    if (cursor.getType(c) != Cursor.FIELD_TYPE_BLOB) {
                         str.append(cursor.getString(c) + "\t");
                     } else {
                         TileSet ts = new TileSet(cursor.getBlob(c));
@@ -718,7 +716,7 @@ public class DataSource {
         return str.toString();
     }
 
-    public void createTestspiel(){
+    public void createTestspiel() {
 
         Log.d("DEBUG", dumpAllTables());
 
@@ -729,23 +727,23 @@ public class DataSource {
         Player p2 = createPlayer("Billy");
 
 
-        p1.getTileSet().addTile(new Tile(Color.RED,3));
-        p1.getTileSet().addTile(new Tile(Color.RED,4));
-        p1.getTileSet().addTile(new Tile(Color.RED,5));
-        p1.getTileSet().addTile(new Tile(Color.RED,6));
+        p1.getTileSet().addTile(new Tile(Color.RED, 3));
+        p1.getTileSet().addTile(new Tile(Color.RED, 4));
+        p1.getTileSet().addTile(new Tile(Color.RED, 5));
+        p1.getTileSet().addTile(new Tile(Color.RED, 6));
 
-        p1.getTileSet().addTile(new Tile(Color.BLUE,9));
-        p1.getTileSet().addTile(new Tile(Color.BLUE,10));
-        p1.getTileSet().addTile(new Tile(Color.BLUE,11));
+        p1.getTileSet().addTile(new Tile(Color.BLUE, 9));
+        p1.getTileSet().addTile(new Tile(Color.BLUE, 10));
+        p1.getTileSet().addTile(new Tile(Color.BLUE, 11));
 
-        p1.getTileSet().addTile(new Tile(Color.YELLOW,6));
-        p1.getTileSet().addTile(new Tile(Color.YELLOW,7));
-        p1.getTileSet().addTile(new Tile(Color.YELLOW,8));
+        p1.getTileSet().addTile(new Tile(Color.YELLOW, 6));
+        p1.getTileSet().addTile(new Tile(Color.YELLOW, 7));
+        p1.getTileSet().addTile(new Tile(Color.YELLOW, 8));
 
-        p1.getTileSet().addTile(new Tile(Color.BLACK,1));
-        p1.getTileSet().addTile(new Tile(Color.BLACK,2));
-        p1.getTileSet().addTile(new Tile(Color.BLACK,12));
-        p1.getTileSet().addTile(new Tile(Color.BLACK,13));
+        p1.getTileSet().addTile(new Tile(Color.BLACK, 1));
+        p1.getTileSet().addTile(new Tile(Color.BLACK, 2));
+        p1.getTileSet().addTile(new Tile(Color.BLACK, 12));
+        p1.getTileSet().addTile(new Tile(Color.BLACK, 13));
 
         p1.getTileSet().addTile(new Tile(true));
 
@@ -766,9 +764,9 @@ public class DataSource {
 
         Lane lane = new Lane();
 
-        lane.addTile(new Tile(Color.YELLOW,3));
-        lane.addTile(new Tile(Color.YELLOW,4));
-        lane.addTile(new Tile(Color.YELLOW,5));
+        lane.addTile(new Tile(Color.YELLOW, 3));
+        lane.addTile(new Tile(Color.YELLOW, 4));
+        lane.addTile(new Tile(Color.YELLOW, 5));
 
         game.getLanes().add(lane);
 

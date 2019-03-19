@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import de.g8keeper.rummikub.database.DBHelper;
 import de.g8keeper.rummikub.database.DataSource;
 
 public class Game implements Parcelable {
@@ -352,7 +353,11 @@ public class Game implements Parcelable {
                 mPosActPlayer = getNextPlayer();
             }
             sb.append("savinng game state\n\n");
+
+            Log.d("DEBUG", mDataSource.dumpTable(DBHelper.TBL_TILESETS));
+            Log.d("DEBUG", "saveGameState");
             saveGameState();
+            Log.d("DEBUG", mDataSource.dumpTable(DBHelper.TBL_TILESETS));
         }
 
 

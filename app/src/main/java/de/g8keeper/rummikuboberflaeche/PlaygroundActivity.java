@@ -105,9 +105,11 @@ public class PlaygroundActivity extends AppCompatActivity {
         llPlayground.setOnDragListener(new ScrollOnDragListener());
 
 
+
         tileSetView = new TileSetView(this);
         llTileSet.addView(tileSetView);
         tileSetView.setOnDragListener(new TileOnDragListener(tileSetView));
+
 
 
 //        testCode();
@@ -361,6 +363,11 @@ public class PlaygroundActivity extends AppCompatActivity {
 
 
             switch (action) {
+
+                case DragEvent.ACTION_DRAG_ENDED:
+                    Log.d(TAG, "onDrag: DRAG ENDED!");
+                    setUpLanes();
+                    break;
 
                 case DragEvent.ACTION_DRAG_LOCATION:
                     x = (int) event.getX();
