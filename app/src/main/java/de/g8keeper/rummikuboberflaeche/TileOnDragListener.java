@@ -14,35 +14,39 @@ public class TileOnDragListener implements View.OnDragListener {
 
     private static final String TAG = TileOnDragListener.class.getSimpleName();
 
-    private static ITileDropTarget draggedTileParentFragment;
+    private static ITileDropTarget draggedTileParentView;
     private static int draggedTileIndex;
     private static int dragAction;
 
 
-    private ITileDropTarget parentFragment;
+    private ITileDropTarget parentView;
     private boolean isTileSet;
     private View draggedView;
 
 
     static {
-        draggedTileParentFragment = null;
+        draggedTileParentView = null;
         draggedTileIndex = -1;
         dragAction = DRAG_ACTION_UNKNOWN;
     }
 
 
-    public TileOnDragListener(ITileDropTarget parentFragment) {
+    public TileOnDragListener(ITileDropTarget parentView) {
 
-        if (parentFragment instanceof TileSetView) {
-            isTileSet = true;
-        } else if (parentFragment instanceof FragmentLane) {
+        if (parentView instanceof LaneView) {
             isTileSet = false;
+
         } else {
-            throw new IllegalArgumentException(TAG +
-                    " parentFragment != FragmentTileSet && parentFragment != FragmentLane");
+            if (parentView instanceof TileSetView) {
+                isTileSet = true;
+
+            } else {
+                throw new IllegalArgumentException(TAG +
+                        " parentView != TileSetView && parentView != LaneView");
+            }
         }
 
-        this.parentFragment = parentFragment;
+        this.parentView = parentView;
         this.draggedView = null;
     }
 
@@ -68,9 +72,9 @@ public class TileOnDragListener implements View.OnDragListener {
 
                     Log.d(TAG, "onDrag: ACTION_DRAG_STARTED -> " + draggedView + "(" + x + ", " + y + ")");
 
-                    draggedTileParentFragment = parentFragment;
+                    draggedTileParentView = parentView;
 
-                    draggedTileIndex = draggedTileParentFragment.getIndexAtPosition(x, y);
+                    draggedTileIndex = draggedTileParentView.getIndexAtPosition(x, y);
 
                     dragAction = isTileSet ? DRAG_ACTION_FROM_TILESET : DRAG_ACTION_FROM_LANE;
 
@@ -83,14 +87,14 @@ public class TileOnDragListener implements View.OnDragListener {
                 x = (int) event.getX();
                 y = (int) event.getY();
 
-                index = parentFragment.getIndexAtPosition(x, y);
+                index = parentView.getIndexAtPosition(x, y);
                 if (!isTileSet) {
 
                     if (((LinearLayout) draggedView.getParent()).indexOfChild(draggedView) != index) {
 
                         removeView((View) draggedView.getParent());
 
-                        addView(parentFragment.getLayout(),index);
+                        addView(parentView.getLayout(),index);
                     }
                 } else {
 
@@ -100,7 +104,7 @@ public class TileOnDragListener implements View.OnDragListener {
 
                             removeView((View) draggedView.getParent());
 
-                            addView(parentFragment.getLayout(),index);
+                            addView(parentView.getLayout(),index);
                         }
                     }
                 }
@@ -113,20 +117,20 @@ public class TileOnDragListener implements View.OnDragListener {
                 x = (int) event.getX();
                 y = (int) event.getY();
 
-                index = parentFragment.getIndexAtPosition(x, y);
+                index = parentView.getIndexAtPosition(x, y);
 
                 Log.d(TAG, "onDrag: ACTION_DROP -> " + draggedView + ":");
 
 
-                if(draggedTileParentFragment == parentFragment &&
+                if(draggedTileParentView == parentView &&
                         draggedTileIndex != index) {
 
-                    draggedTileParentFragment.synchronize();
+                    draggedTileParentView.synchronize();
 
                 } else {
 
-                    draggedTileParentFragment.synchronize();
-                    parentFragment.synchronize();
+                    draggedTileParentView.synchronize();
+                    parentView.synchronize();
 
                 }
 
@@ -135,11 +139,11 @@ public class TileOnDragListener implements View.OnDragListener {
 
             case DragEvent.ACTION_DRAG_ENDED:
 
-                if (parentFragment.equals(draggedTileParentFragment)) {
+                if (parentView.equals(draggedTileParentView)) {
 
                     if (draggedView.getParent() == null) {
 
-                        addView(draggedTileParentFragment.getLayout(), draggedTileIndex);
+                        addView(draggedTileParentView.getLayout(), draggedTileIndex);
                     }
 
 
